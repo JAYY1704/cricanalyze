@@ -136,19 +136,54 @@
             flex: 1;
             min-width: 150px;
         }
-        .year-filter {
+        .year-filter-btn {
             flex: 1;
             min-width: 150px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        .year-filter label {
+        .year-filter-btn:hover {
+            background-color: #1976D2;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .modal-content label {
             display: flex;
             align-items: center;
             gap: 5px;
             margin: 5px 0;
         }
-        .year-filter input[type="checkbox"] {
+        .modal-content input[type="checkbox"] {
             width: auto;
             margin: 0;
+        }
+        .modal-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
         }
         @media (max-width: 600px) {
             body { padding: 5px; }
@@ -156,9 +191,10 @@
             h1 { font-size: 1.5em; }
             input, select, button { padding: 10px; font-size: 0.95em; }
             .button-group, .filter-group { flex-direction: column; gap: 8px; }
-            button { padding: 12px; font-size: 0.95em; }
+            button, .year-filter-btn { padding: 12px; font-size: 0.95em; }
             #output { font-size: 0.9em; min-height: 150px; }
             th, td { font-size: 0.9em; padding: 6px; }
+            .modal-content { padding: 15px; max-width: 95%; }
         }
     </style>
 </head>
@@ -200,6 +236,17 @@
         <div id="output">Upload your Excel file to start.</div>
     </div>
 
+    <div id="yearFilterModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Years</h2>
+            <div id="yearCheckboxes"></div>
+            <div class="modal-buttons">
+                <button onclick="applyYearFilter()">OK</button>
+                <button onclick="closeYearFilterModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" 
             onerror="alert('Failed to load SheetJS. Check internet or use a local copy.');"></script>
     <script>
@@ -211,6 +258,7 @@
         let lastData = null;
         let allYears = [];
         let allScoreRanges = [];
+        let selectedYears = [];
 
         const overSelect = document.getElementById('overSelect');
         
@@ -292,6 +340,29 @@
                 chased: totalValid > 0 ? (chasedCount / totalValid * 100).toFixed(2) : 0,
                 defend: totalValid > 0 ? (defendCount / totalValid * 100).toFixed(2) : 0
             };
+        }
+
+        function openYearFilterModal() {
+            const modal = document.getElementById('yearFilterModal');
+            const checkboxesDiv = document.getElementById('yearCheckboxes');
+            let html = '';
+            allYears.forEach(year => {
+                const isChecked = selectedYears.length === 0 || selectedYears.includes(year.toString());
+                html += `<label><input type="checkbox" class="year-checkbox" value="${year}" ${isChecked ? 'checked' : ''}>${year}</label>`;
+            });
+            checkboxesDiv.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function closeYearFilterModal() {
+            document.getElementById('yearFilterModal').style.display = 'none';
+        }
+
+        function applyYearFilter() {
+            const yearCheckboxes = document.querySelectorAll('.year-checkbox:checked');
+            selectedYears = Array.from(yearCheckboxes).map(cb => cb.value);
+            closeYearFilterModal();
+            applyFilters();
         }
 
         function processInput() {
@@ -420,11 +491,7 @@
                 html += `<p>No matches found${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`} after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
             } else {
                 html += '<div class="filter-group">';
-                html += '<div class="year-filter"><label>Filter Years:</label>';
-                allYears.forEach(year => {
-                    html += `<label><input type="checkbox" class="year-checkbox" value="${year}" checked onchange="applyFilters()">${year}</label>`;
-                });
-                html += '</div>';
+                html += '<button class="year-filter-btn" onclick="openYearFilterModal()">Filter Years</button>';
                 html += '<label for="scoreRangeFilter">Filter Score Range:</label>';
                 html += '<select id="scoreRangeFilter" onchange="applyFilters()"><option value="">All Score Ranges</option>';
                 allScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
@@ -447,6 +514,7 @@
 
                 sortedRows.sort((a, b) => a.year - b.year);
                 lastData = [];
+                selectedYears = allYears.map(String); // Initially select all years
 
                 sortedRows.forEach(({ year, match }) => {
                     const rowData = { Year: year };
@@ -493,8 +561,6 @@
         }
 
         function applyFilters() {
-            const yearCheckboxes = document.querySelectorAll('.year-checkbox:checked');
-            const selectedYears = Array.from(yearCheckboxes).map(cb => cb.value);
             const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
             const filteredData = lastData.filter(row => {
                 const yearMatch = selectedYears.length === 0 || selectedYears.includes(row.Year.toString());
@@ -563,6 +629,7 @@
             lastData = null;
             allYears = [];
             allScoreRanges = [];
+            selectedYears = [];
             document.getElementById('fileInput').value = '';
             document.getElementById('scoreInput').value = '';
             document.getElementById('overSelect').value = '';
