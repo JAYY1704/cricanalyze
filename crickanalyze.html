@@ -643,7 +643,7 @@
         }
 
         function addSortFunctionality() {
-            const table = document.querySelector('table');
+            const table = document.querySelector('#output table');
             if (!table) return;
 
             const headers = table.querySelectorAll('th');
@@ -767,6 +767,50 @@
             html += '</tbody></table>';
             outputDiv.innerHTML = html;
             modal.style.display = 'flex';
+
+            // Add sorting functionality to the modal table
+            addModalSortFunctionality();
+        }
+
+        function addModalSortFunctionality() {
+            const table = document.querySelector('#fullDetailsOutput table');
+            if (!table) return;
+
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.dataset.sort !== 'asc';
+                    
+                    rows.sort((a, b) => {
+                        const aValue = a.cells[index].textContent;
+                        const bValue = b.cells[index].textContent;
+                        
+                        if (header.textContent === 'year') {
+                            return isAscending ? 
+                                Number(aValue) - Number(bValue) : 
+                                Number(bValue) - Number(aValue);
+                        }
+                        
+                        if (aValue.includes('/') && bValue.includes('/')) {
+                            const [runsA] = aValue.split('/').map(Number);
+                            const [runsB] = bValue.split('/').map(Number);
+                            return isAscending ? runsA - runsB : runsB - runsA;
+                        }
+                        
+                        return isAscending ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+
+                    headers.forEach(h => delete h.dataset.sort);
+                    header.dataset.sort = isAscending ? 'asc' : 'desc';
+                    
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
         }
 
         function closeFullDetailsModal() {
