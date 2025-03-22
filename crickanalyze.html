@@ -6,26 +6,155 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Cricket Chase Analyzer</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f4; min-height: 100vh; display: flex; flex-direction: column; }
-        .container { max-width: 1200px; width: 100%; margin: 0 auto; background: white; padding: 15px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 15px; flex-grow: 1; box-sizing: border-box; }
-        h1 { text-align: center; color: #333; font-size: 1.8em; margin: 0 0 10px; }
-        label { display: block; margin: 5px 0 2px; font-weight: bold; font-size: 1em; }
-        input, select, button { width: 100%; padding: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1em; border-radius: 4px; border: 1px solid #ddd; -webkit-appearance: none; appearance: none; }
-        select { background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="black"/></svg>') no-repeat right 10px center; background-size: 12px; }
-        .button-group { display: flex; gap: 10px; flex-wrap: wrap; }
-        button { flex: 1; padding: 12px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 1em; min-width: 100px; touch-action: manipulation; }
-        button:hover { background-color: #45a049; }
-        #resetBtn { background-color: #f44336; }
-        #resetBtn:hover { background-color: #d32f2f; }
-        #downloadBtn { background-color: #2196F3; }
-        #downloadBtn:hover { background-color: #1976D2; }
-        #output { white-space: pre-wrap; font-family: monospace; background: #f9f9f9; padding: 15px; border: 1px solid #ddd; min-height: 200px; overflow-y: auto; overflow-x: auto; font-size: 1em; line-height: 1.5; flex-grow: 1; -webkit-overflow-scrolling: touch; }
-        @media (max-width: 600px) { body { padding: 5px; } .container { padding: 10px; } h1 { font-size: 1.5em; } input, select, button { padding: 10px; font-size: 0.95em; } .button-group { flex-direction: column; gap: 8px; } button { padding: 12px; font-size: 0.95em; } #output { font-size: 0.9em; min-height: 150px; } }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.8em;
+            margin: 0 0 10px;
+        }
+        label {
+            display: block;
+            margin: 5px 0 2px;
+            font-weight: bold;
+            font-size: 1em;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 1em;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        select[multiple] {
+            height: 100px;
+        }
+        select {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="black"/></svg>') no-repeat right 10px center;
+            background-size: 12px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1em;
+            min-width: 100px;
+            touch-action: manipulation;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #resetBtn {
+            background-color: #f44336;
+        }
+        #resetBtn:hover {
+            background-color: #d32f2f;
+        }
+        #downloadBtn {
+            background-color: #2196F3;
+        }
+        #downloadBtn:hover {
+            background-color: #1976D2;
+        }
+        #output {
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            min-height: 200px;
+            overflow-y: auto;
+            overflow-x: auto;
+            flex-grow: 1;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            font-size: 1em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        th:hover {
+            background-color: #45a049;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-group select {
+            flex: 1;
+            min-width: 150px;
+        }
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            h1 { font-size: 1.5em; }
+            input, select, button { padding: 10px; font-size: 0.95em; }
+            .button-group, .filter-group { flex-direction: column; gap: 8px; }
+            button { padding: 12px; font-size: 0.95em; }
+            #output { font-size: 0.9em; min-height: 150px; }
+            th, td { font-size: 0.9em; padding: 6px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Cricket Chase Analyzer</h1>
+        
         <label for="fileInput">Upload Excel File:</label>
         <input type="file" id="fileInput" accept=".xlsx, .xls">
         
@@ -68,7 +197,9 @@
         let firstInningsDone = false;
         let scoreRange = null;
         let targetRuns = null;
-        let lastOutput = '';
+        let lastData = null;
+        let allYears = [];
+        let allScoreRanges = [];
 
         const overSelect = document.getElementById('overSelect');
         
@@ -81,7 +212,7 @@
                 overSelect.appendChild(option);
             }
             overSelect.style.display = 'none';
-            overSelect.offsetHeight; // Force reflow
+            overSelect.offsetHeight;
             overSelect.style.display = 'block';
         }
         populateOverSelect();
@@ -96,32 +227,28 @@
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
-                    console.log('File size:', data.length); // Debug file size
-                    const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                    const workbook = XLSX.read(data, { type: 'array' });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    matches = XLSX.utils.sheet_to_json(sheet, { defval: null });
+                    matches = XLSX.utils.sheet_to_json(sheet);
                     filteredMatches = matches;
-                    console.log('Matches loaded:', matches.length, 'First match:', matches[0]);
-                    document.getElementById('output').textContent = `File loaded successfully! ${matches.length} matches found.\nFirst match: ${JSON.stringify(matches[0], null, 2)}`;
+                    document.getElementById('output').textContent = `File loaded successfully! ${matches.length} matches found.`;
+                    console.log("Loaded matches:", matches);
                 } catch (err) {
-                    console.error('File parsing error:', err);
                     alert('Error loading file: ' + err.message);
                     document.getElementById('output').textContent = "Error loading file: " + err.message;
                 }
             };
-            reader.onerror = function(err) {
-                console.error('FileReader error:', err);
+            reader.onerror = function() {
                 alert('Failed to read file.');
             };
             reader.readAsArrayBuffer(file);
         });
 
         function parseScore(scoreWickets) {
-            const parts = scoreWickets.trim().split('/');
-            console.log('Parsing score:', scoreWickets, 'Parts:', parts);
+            const parts = scoreWickets.split('/');
             if (parts.length !== 2) return [null, null];
-            const runs = parseInt(parts[0], 10);
-            const wickets = parseInt(parts[1], 10);
+            const runs = parseInt(parts[0]);
+            const wickets = parseInt(parts[1]);
             if (isNaN(runs) || isNaN(wickets) || wickets < 0 || wickets > 10) return [null, null];
             return [runs, wickets];
         }
@@ -133,16 +260,11 @@
             return [min, max];
         }
 
-        function padString(str, length) {
-            return String(str).padEnd(length, ' ');
-        }
-
         function compareScores(scoreA, scoreB) {
             if (!scoreA || !scoreB) return scoreA ? 1 : -1;
-            const [runsA, wicketsA] = scoreA.split('/').map(Number);
-            const [runsB, wicketsB] = scoreB.split('/').map(Number);
-            if (runsA !== runsB) return runsA - runsB;
-            return wicketsA - wicketsB;
+            const [runsA] = scoreA.split('/').map(Number);
+            const [runsB] = scoreB.split('/').map(Number);
+            return runsA - runsB;
         }
 
         function calculateDifference(scoreLater, scoreEarlier) {
@@ -154,14 +276,26 @@
             return `${runDiff}/${wicketDiff}`;
         }
 
+        function calculateProbabilities(data) {
+            const validResults = data.filter(row => 
+                row.Result.toLowerCase() === 'chased' || row.Result.toLowerCase() === 'defend'
+            );
+            const totalValid = validResults.length;
+            if (totalValid === 0) return { chased: 0, defend: 0 };
+            const chasedCount = validResults.filter(row => row.Result.toLowerCase() === 'chased').length;
+            const defendCount = validResults.filter(row => row.Result.toLowerCase() === 'defend').length;
+            return {
+                chased: totalValid > 0 ? (chasedCount / totalValid * 100).toFixed(2) : 0,
+                defend: totalValid > 0 ? (defendCount / totalValid * 100).toFixed(2) : 0
+            };
+        }
+
         function processInput() {
             const scoreWickets = document.getElementById('scoreInput').value.trim();
-            const over = parseInt(document.getElementById('overSelect').value, 10);
+            const over = parseInt(document.getElementById('overSelect').value);
             const rangeStr = document.getElementById('rangeSelect').value;
             const [runs, wickets] = parseScore(scoreWickets);
             const output = document.getElementById('output');
-
-            console.log('Processing input:', { scoreWickets, over, rangeStr, runs, wickets });
 
             if (!scoreWickets || isNaN(over) || runs === null || wickets === null) {
                 output.textContent = "Please enter valid score/wickets (e.g., '20/1') and select an over.";
@@ -207,12 +341,13 @@
                     const [matchRuns] = score.split('/').map(Number);
                     return matchRuns >= selectedRange[0] && (selectedRange[1] === Infinity ? true : matchRuns <= selectedRange[1]);
                 });
+                scoreRange = selectedRange;
             } else if (over > 20 && scoreRange) {
                 compareData = compareData.filter(match => {
                     const score = match['20over'];
                     if (!score) return false;
                     const [matchRuns] = score.split('/').map(Number);
-                    return matchRuns >= scoreRange[0] && (scoreRange[1] === Infinity ? true : matchRuns <= scoreRange[1]);
+                    return matchRuns >= scoreRange[0] && (selectedRange[1] === Infinity ? true : matchRuns <= selectedRange[1]);
                 });
             }
 
@@ -220,8 +355,6 @@
             const yearMatches = {};
             let totalMatches = 0;
             let runDifference = null;
-
-            console.log('Processing data:', { overKey, matchesLength: matches.length, compareDataLength: compareData.length });
 
             if (over <= 20) {
                 compareData.forEach((match, index) => {
@@ -253,110 +386,166 @@
                 });
             }
 
-            console.log('Results:', { totalMatches, yearMatchesKeys: Object.keys(yearMatches) });
+            allYears = [...new Set(Object.keys(yearMatches).map(Number))].sort((a, b) => a - b);
+            allScoreRanges = [];
+            compareData.forEach(match => {
+                const score = match['20over'];
+                if (score) {
+                    const [runs] = score.split('/').map(Number);
+                    const range = getScoreRange(runs);
+                    const rangeStr = range[1] === Infinity ? '200+' : `${range[0]}-${range[1]}`;
+                    if (!allScoreRanges.includes(rangeStr)) allScoreRanges.push(rangeStr);
+                }
+            });
+            allScoreRanges.sort((a, b) => {
+                if (a === '200+') return 1;
+                if (b === '200+') return -1;
+                return parseInt(a.split('-')[0]) - parseInt(b.split('-')[0]);
+            });
 
-            let resultText = `Analysis for ${runs}/${wickets} after Over ${over}:\n`;
+            let html = `<p>Analysis for ${runs}/${wickets} after Over ${over}<br>`;
             if (over > 20 || selectedRange) {
-                resultText += `20-Over Score Range: ${rangeStr || `${scoreRange[0]}-${scoreRange[1] === Infinity ? '200+' : scoreRange[1]}`}\n`;
+                html += `20-Over Score Range: ${rangeStr || `${scoreRange[0]}-${scoreRange[1] === Infinity ? '200+' : scoreRange[1]}`}<br>`;
             }
             if (over > 20 && runDifference !== null) {
-                resultText += `Run Difference (20ov - ${over}ov): ${runDifference}\n`;
+                html += `Run Difference (20ov - ${over}ov): ${runDifference}<br>`;
             }
-            resultText += `Total matches${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`}: ${totalMatches}\n\n`;
+            html += `Total matches${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`}: ${totalMatches}</p>`;
 
             if (totalMatches === 0) {
-                resultText += `No matches found${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`} after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.\nDebug: matches=${matches.length}, compareData=${compareData.length}`;
+                html += `<p>No matches found${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`} after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
             } else {
-                if (over <= 20) {
-                    resultText += "Year-wise Match Details:\n";
-                    resultText += padString("Year", 6) + padString("Match", 8) +
-                        (over < 6 ? padString("6ov", 8) : "") +
-                        (over < 10 ? padString("10ov", 8) : "") +
-                        (over < 15 ? padString("15ov", 8) : "") +
-                        padString("20ov", 8) + padString("Result", 8) + "\n";
-                    resultText += "-".repeat(60) + "\n";
+                html += '<div class="filter-group">';
+                html += '<label for="yearFilter">Filter Years:</label>';
+                html += '<select id="yearFilter" multiple onchange="applyFilters()">';
+                allYears.forEach(year => html += `<option value="${year}" selected>${year}</option>`);
+                html += '</select>';
+                html += '<label for="scoreRangeFilter">Filter Score Range:</label>';
+                html += '<select id="scoreRangeFilter" onchange="applyFilters()"><option value="">All Score Ranges</option>';
+                allScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
+                html += '</select></div>';
 
-                    const sortedRows = [];
-                    Object.keys(yearMatches).sort().forEach(year => {
-                        yearMatches[year].forEach(({ match, index }) => {
-                            sortedRows.push({ year, match, index });
-                        });
-                    });
+                html += '<div class="table-container"><table><thead><tr>';
+                const headers = over <= 20 ? 
+                    ["Year", ...(over < 6 ? ["6ov"] : []), ...(over < 10 ? ["10ov"] : []), ...(over < 15 ? ["15ov"] : []), "20ov", "Result"] :
+                    ["Year", ...(over < 26 ? ["26ov"] : []), ...(over < 30 ? ["30ov"] : []), ...(over < 35 ? ["35ov"] : []), `${over}ov`, "20ov", "40ov", "15ov-6ov", "20ov-6ov", "Result"];
+                
+                headers.forEach(header => html += `<th>${header}</th>`);
+                html += '</tr></thead><tbody id="tableBody">';
 
-                    sortedRows.sort((a, b) => {
-                        if (a.year !== b.year) return a.year - b.year;
-                        if (a.index !== b.index) return a.index - b.index;
-                        if (over < 6 && a.match['6over'] !== b.match['6over']) return compareScores(a.match['6over'], b.match['6over']);
-                        if (over < 10 && a.match['10over'] !== b.match['10over']) return compareScores(a.match['10over'], b.match['10over']);
-                        if (over < 15 && a.match['15over'] !== b.match['15over']) return compareScores(a.match['15over'], b.match['15over']);
-                        if (a.match['20over'] !== b.match['20over']) return compareScores(a.match['20over'], b.match['20over']);
-                        return (a.match['result'] || 'unknown').localeCompare(b.match['result'] || 'unknown');
+                const sortedRows = [];
+                Object.keys(yearMatches).sort().forEach(year => {
+                    yearMatches[year].forEach(({ match }) => {
+                        sortedRows.push({ year, match });
                     });
+                });
 
-                    sortedRows.forEach(({ year, match, index }) => {
-                        const row = padString(year, 6) + padString(`#${index + 1}`, 8) +
-                            (over < 6 ? padString(match['6over'] || "N/A", 8) : "") +
-                            (over < 10 ? padString(match['10over'] || "N/A", 8) : "") +
-                            (over < 15 ? padString(match['15over'] || "N/A", 8) : "") +
-                            padString(match['20over'] || "N/A", 8) +
-                            padString(match['result'] || "unknown", 8) + "\n";
-                        resultText += row;
-                    });
-                } else {
-                    resultText += "Year-wise Match Details:\n";
-                    resultText += padString("Year", 6) + padString("Match", 8) +
-                        (over < 26 ? padString("26ov", 8) : "") +
-                        (over < 30 ? padString("30ov", 8) : "") +
-                        (over < 35 ? padString("35ov", 8) : "") +
-                        padString(`${over}ov`, 8) +
-                        padString("20ov", 8) +
-                        padString("40ov", 8) +
-                        padString("15ov-6ov", 10) +
-                        padString("20ov-6ov", 10) +
-                        padString("Result", 8) + "\n";
-                    resultText += "-".repeat(94) + "\n";
+                sortedRows.sort((a, b) => a.year - b.year);
+                lastData = [];
 
-                    const sortedRows = [];
-                    Object.keys(yearMatches).sort().forEach(year => {
-                        yearMatches[year].forEach(({ match, index }) => {
-                            sortedRows.push({ year, match, index });
-                        });
-                    });
+                sortedRows.forEach(({ year, match }) => {
+                    const rowData = { Year: year };
+                    if (over <= 20) {
+                        if (over < 6) rowData['6ov'] = match['6over'] || "N/A";
+                        if (over < 10) rowData['10ov'] = match['10over'] || "N/A";
+                        if (over < 15) rowData['15ov'] = match['15over'] || "N/A";
+                        rowData['20ov'] = match['20over'] || "N/A";
+                        rowData['Result'] = match['result'] || "unknown";
+                    } else {
+                        if (over < 26) rowData['26ov'] = match['26over'] || "N/A";
+                        if (over < 30) rowData['30ov'] = match['30over'] || "N/A";
+                        if (over < 35) rowData['35ov'] = match['35over'] || "N/A";
+                        rowData[`${over}ov`] = match[overKey] || "N/A";
+                        rowData['20ov'] = match['20over'] || "N/A";
+                        rowData['40ov'] = match['40over'] || "N/A";
+                        rowData['15ov-6ov'] = calculateDifference(match['15over'], match['6over']);
+                        rowData['20ov-6ov'] = calculateDifference(match['20over'], match['6over']);
+                        rowData['Result'] = match['result'] || "unknown";
+                    }
+                    lastData.push(rowData);
+                });
 
-                    sortedRows.sort((a, b) => {
-                        if (a.year !== b.year) return a.year - b.year;
-                        if (a.index !== b.index) return a.index - b.index;
-                        if (over < 26 && a.match['26over'] !== b.match['26over']) return compareScores(a.match['26over'], b.match['26over']);
-                        if (over < 30 && a.match['30over'] !== b.match['30over']) return compareScores(a.match['30over'], b.match['30over']);
-                        if (over < 35 && a.match['35over'] !== b.match['35over']) return compareScores(a.match['35over'], b.match['35over']);
-                        const overKey = `${over}over`;
-                        if (a.match[overKey] !== b.match[overKey]) return compareScores(a.match[overKey], b.match[overKey]);
-                        if (a.match['20over'] !== b.match['20over']) return compareScores(a.match['20over'], b.match['20over']);
-                        if (a.match['40over'] !== b.match['40over']) return compareScores(a.match['40over'], b.match['40over']);
-                        return (a.match['result'] || 'unknown').localeCompare(b.match['result'] || 'unknown');
-                    });
+                html += generateTableRows(lastData);
+                html += '</tbody></table></div>';
 
-                    sortedRows.forEach(({ year, match, index }) => {
-                        const diff15ov6ov = calculateDifference(match['15over'], match['6over']);
-                        const diff20ov6ov = calculateDifference(match['20over'], match['6over']);
-                        const row = padString(year, 6) + padString(`#${index + 1}`, 8) +
-                            (over < 26 ? padString(match['26over'] || "N/A", 8) : "") +
-                            (over < 30 ? padString(match['30over'] || "N/A", 8) : "") +
-                            (over < 35 ? padString(match['35over'] || "N/A", 8) : "") +
-                            padString(match[overKey] || "N/A", 8) +
-                            padString(match['20over'] || "N/A", 8) +
-                            padString(match['40over'] || "N/A", 8) +
-                            padString(diff15ov6ov, 10) +
-                            padString(diff20ov6ov, 10) +
-                            padString(match['result'] || "unknown", 8) + "\n";
-                        resultText += row;
-                    });
-                }
+                const probabilities = calculateProbabilities(lastData);
+                html += `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>`;
             }
 
-            output.textContent = resultText;
-            lastOutput = resultText;
-            document.getElementById('downloadBtn').disabled = false;
+            output.innerHTML = html;
+            document.getElementById('downloadBtn').disabled = totalMatches === 0;
+            addSortFunctionality();
+        }
+
+        function generateTableRows(data) {
+            let html = '';
+            data.forEach(row => {
+                html += '<tr>';
+                Object.values(row).forEach(value => html += `<td>${value}</td>`);
+                html += '</tr>';
+            });
+            return html;
+        }
+
+        function applyFilters() {
+            const yearFilter = Array.from(document.getElementById('yearFilter').selectedOptions).map(opt => opt.value);
+            const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
+            const filteredData = lastData.filter(row => {
+                const yearMatch = yearFilter.length === 0 || yearFilter.includes(row.Year.toString());
+                const rangeMatch = !scoreRangeFilter || (() => {
+                    const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
+                    const range = parseRange(scoreRangeFilter);
+                    return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
+                })();
+                return yearMatch && rangeMatch;
+            });
+            document.getElementById('tableBody').innerHTML = generateTableRows(filteredData);
+            const probabilities = calculateProbabilities(filteredData);
+            const output = document.getElementById('output');
+            output.innerHTML = output.innerHTML.split('<p>Probability')[0] + 
+                `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>`;
+            addSortFunctionality();
+        }
+
+        function addSortFunctionality() {
+            const table = document.querySelector('table');
+            if (!table) return;
+
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.dataset.sort !== 'asc';
+                    
+                    rows.sort((a, b) => {
+                        const aValue = a.cells[index].textContent;
+                        const bValue = b.cells[index].textContent;
+                        
+                        if (header.textContent === 'Year') {
+                            return isAscending ? 
+                                Number(aValue) - Number(bValue) : 
+                                Number(bValue) - Number(aValue);
+                        }
+                        
+                        if (aValue.includes('/') && bValue.includes('/')) {
+                            const [runsA] = aValue.split('/').map(Number);
+                            const [runsB] = bValue.split('/').map(Number);
+                            return isAscending ? runsA - runsB : runsB - runsA;
+                        }
+                        
+                        return isAscending ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+
+                    headers.forEach(h => delete h.dataset.sort);
+                    header.dataset.sort = isAscending ? 'asc' : 'desc';
+                    
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
         }
 
         function resetForm() {
@@ -365,7 +554,9 @@
             firstInningsDone = false;
             scoreRange = null;
             targetRuns = null;
-            lastOutput = '';
+            lastData = null;
+            allYears = [];
+            allScoreRanges = [];
             document.getElementById('fileInput').value = '';
             document.getElementById('scoreInput').value = '';
             document.getElementById('overSelect').value = '';
@@ -376,16 +567,12 @@
         }
 
         function downloadResults() {
-            if (!lastOutput) return;
-            const blob = new Blob([lastOutput], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Cricket_Analysis_${new Date().toISOString().slice(0,10)}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            if (!lastData) return;
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(lastData);
+            XLSX.utils.book_append_sheet(wb, ws, "Results");
+            XLSX.writeFile(wb, `Cricket_Analysis_${new Date().toISOString().slice(0,10)}.xlsx`);
         }
 
         function getScoreRange(runs) {
