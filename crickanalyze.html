@@ -88,6 +88,16 @@
         #downloadBtn:hover {
             background-color: #1976D2;
         }
+        #viewDetailsBtn {
+            background-color: #FF9800; /* Orange for distinction */
+        }
+        #viewDetailsBtn:hover {
+            background-color: #F57C00;
+        }
+        #viewDetailsBtn:disabled {
+            background-color: #B0BEC5; /* Grayed out when disabled */
+            cursor: not-allowed;
+        }
         #output {
             background: #f9f9f9;
             padding: 15px;
@@ -261,6 +271,7 @@
             <button onclick="processInput()">Submit</button>
             <button id="resetBtn" onclick="resetForm()">Reset</button>
             <button id="downloadBtn" onclick="downloadResults()" disabled>Download Results</button>
+            <button id="viewDetailsBtn" onclick="viewFullMatchDetails()" disabled>View Full Match Details</button>
         </div>
         
         <div id="output">Upload your Excel file to start.</div>
@@ -273,6 +284,16 @@
             <div class="modal-buttons">
                 <button onclick="applyYearFilter()">OK</button>
                 <button onclick="closeYearFilterModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullDetailsModal" class="modal">
+        <div class="modal-content">
+            <h2>Full Match Details</h2>
+            <div id="fullDetailsOutput" class="table-container"></div>
+            <div class="modal-buttons">
+                <button onclick="closeFullDetailsModal()">Close</button>
             </div>
         </div>
     </div>
@@ -525,7 +546,7 @@
                 html += '<select id="scoreRangeFilter" onchange="applyFilters()"><option value="">All Score Ranges</option>';
                 allScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
                 html += '</select>';
-                html += '<label for="resultFilter">Filter Result:</label>'; // Added Filter by Result
+                html += '<label for="resultFilter">Filter Result:</label>';
                 html += '<select id="resultFilter" onchange="applyFilters()"><option value="">All Results</option><option value="chased">Chased</option><option value="defend">Defend</option></select>';
                 html += '</div>';
 
@@ -549,7 +570,7 @@
                 selectedYears = allYears.map(String); // Initially select all years
 
                 sortedRows.forEach(({ year, match }) => {
-                    const rowData = { Year: year };
+                    const rowData = { Year: year, originalMatch: match }; // Store full match object
                     if (over <= 20) {
                         if (over < 6) rowData['6ov'] = match['6over'] || "N/A";
                         if (over < 10) rowData['10ov'] = match['10over'] || "N/A";
@@ -579,6 +600,7 @@
 
             output.innerHTML = html;
             document.getElementById('downloadBtn').disabled = totalMatches === 0;
+            document.getElementById('viewDetailsBtn').disabled = totalMatches === 0;
             addSortFunctionality();
         }
 
@@ -588,7 +610,9 @@
                 const overKey = `${over}ov`;
                 const isMatch = over <= 20 && row[overKey] === `${runs}/${wickets}`;
                 html += `<tr ${isMatch ? 'class="highlight"' : ''}>`;
-                Object.values(row).forEach(value => html += `<td>${value}</td>`);
+                Object.entries(row).forEach(([key, value]) => {
+                    if (key !== 'originalMatch') html += `<td>${value}</td>`; // Skip originalMatch in main table
+                });
                 html += '</tr>';
             });
             return html;
@@ -596,7 +620,7 @@
 
         function applyFilters() {
             const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
-            const resultFilter = document.getElementById('resultFilter').value; // Added for result filter
+            const resultFilter = document.getElementById('resultFilter').value;
             const [runs, wickets] = parseScore(document.getElementById('scoreInput').value);
             const over = parseInt(document.getElementById('overSelect').value);
             const filteredData = lastData.filter(row => {
@@ -606,7 +630,7 @@
                     const range = parseRange(scoreRangeFilter);
                     return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
                 })();
-                const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter; // Added result filtering
+                const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
                 return yearMatch && rangeMatch && resultMatch;
             });
             document.getElementById('tableBody').innerHTML = generateTableRows(filteredData, over, runs, wickets);
@@ -614,6 +638,7 @@
             const output = document.getElementById('output');
             output.innerHTML = output.innerHTML.split('<p>Probability')[0] + 
                 `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>`;
+            document.getElementById('viewDetailsBtn').disabled = filteredData.length === 0;
             addSortFunctionality();
         }
 
@@ -674,6 +699,7 @@
             document.getElementById('rangeSelect').value = '';
             document.getElementById('output').textContent = "Upload your Excel file to start.";
             document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('viewDetailsBtn').disabled = true;
             populateOverSelect();
         }
 
@@ -690,6 +716,61 @@
             if (runs >= 200) return [200, Infinity];
             const rangeStart = Math.floor(runs / 10) * 10;
             return [rangeStart, rangeStart + 9];
+        }
+
+        function viewFullMatchDetails() {
+            const modal = document.getElementById('fullDetailsModal');
+            const outputDiv = document.getElementById('fullDetailsOutput');
+            if (!lastData || lastData.length === 0) {
+                outputDiv.textContent = "No data available.";
+                modal.style.display = 'flex';
+                return;
+            }
+
+            // Apply the same filters as in applyFilters()
+            const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
+            const resultFilter = document.getElementById('resultFilter').value;
+            const filteredData = lastData.filter(row => {
+                const yearMatch = selectedYears.length === 0 || selectedYears.includes(row.Year.toString());
+                const rangeMatch = !scoreRangeFilter || (() => {
+                    const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
+                    const range = parseRange(scoreRangeFilter);
+                    return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
+                })();
+                const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
+                return yearMatch && rangeMatch && resultMatch;
+            });
+
+            if (filteredData.length === 0) {
+                outputDiv.textContent = "No matches match the current filters.";
+                modal.style.display = 'flex';
+                return;
+            }
+
+            // Get all unique keys from the filtered original match data
+            const allKeys = [...new Set(filteredData.flatMap(row => Object.keys(row.originalMatch)))];
+
+            // Build the table
+            let html = '<table><thead><tr>';
+            allKeys.forEach(key => html += `<th>${key}</th>`);
+            html += '</tr></thead><tbody>';
+
+            filteredData.forEach(row => {
+                html += '<tr>';
+                allKeys.forEach(key => {
+                    const value = row.originalMatch[key] !== undefined ? row.originalMatch[key] : "N/A";
+                    html += `<td>${value}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            outputDiv.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function closeFullDetailsModal() {
+            document.getElementById('fullDetailsModal').style.display = 'none';
         }
     </script>
 </body>
