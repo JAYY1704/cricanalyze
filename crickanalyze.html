@@ -169,21 +169,42 @@
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            position: relative;
         }
-        .modal-content label {
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        .year-checkbox-label {
             display: flex;
             align-items: center;
-            gap: 5px;
-            margin: 5px 0;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 1em;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
-        .modal-content input[type="checkbox"] {
-            width: auto;
+        .year-checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
             margin: 0;
+            cursor: pointer;
+            -webkit-appearance: checkbox;
+            appearance: checkbox;
         }
         .modal-buttons {
-            margin-top: 15px;
+            margin-top: 20px;
             display: flex;
             gap: 10px;
+            justify-content: flex-end;
+        }
+        .modal-buttons button {
+            flex: none;
+            width: auto;
+            min-width: 80px;
         }
         @media (max-width: 600px) {
             body { padding: 5px; }
@@ -195,6 +216,7 @@
             #output { font-size: 0.9em; min-height: 150px; }
             th, td { font-size: 0.9em; padding: 6px; }
             .modal-content { padding: 15px; max-width: 95%; }
+            .year-checkbox-label input[type="checkbox"] { width: 18px; height: 18px; }
         }
     </style>
 </head>
@@ -348,7 +370,7 @@
             let html = '';
             allYears.forEach(year => {
                 const isChecked = selectedYears.length === 0 || selectedYears.includes(year.toString());
-                html += `<label><input type="checkbox" class="year-checkbox" value="${year}" ${isChecked ? 'checked' : ''}>${year}</label>`;
+                html += `<label class="year-checkbox-label"><input type="checkbox" class="year-checkbox" value="${year}" ${isChecked ? 'checked' : ''}>${year}</label>`;
             });
             checkboxesDiv.innerHTML = html;
             modal.style.display = 'flex';
