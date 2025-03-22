@@ -52,9 +52,6 @@
             -webkit-appearance: none;
             appearance: none;
         }
-        select[multiple] {
-            height: 100px;
-        }
         select {
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="black"/></svg>') no-repeat right 10px center;
             background-size: 12px;
@@ -138,6 +135,20 @@
         .filter-group select {
             flex: 1;
             min-width: 150px;
+        }
+        .year-filter {
+            flex: 1;
+            min-width: 150px;
+        }
+        .year-filter label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px 0;
+        }
+        .year-filter input[type="checkbox"] {
+            width: auto;
+            margin: 0;
         }
         @media (max-width: 600px) {
             body { padding: 5px; }
@@ -258,13 +269,6 @@
             if (rangeStr === "200+") return [200, Infinity];
             const [min, max] = rangeStr.split('-').map(Number);
             return [min, max];
-        }
-
-        function compareScores(scoreA, scoreB) {
-            if (!scoreA || !scoreB) return scoreA ? 1 : -1;
-            const [runsA] = scoreA.split('/').map(Number);
-            const [runsB] = scoreB.split('/').map(Number);
-            return runsA - runsB;
         }
 
         function calculateDifference(scoreLater, scoreEarlier) {
@@ -416,10 +420,11 @@
                 html += `<p>No matches found${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`} after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
             } else {
                 html += '<div class="filter-group">';
-                html += '<label for="yearFilter">Filter Years:</label>';
-                html += '<select id="yearFilter" multiple onchange="applyFilters()">';
-                allYears.forEach(year => html += `<option value="${year}" selected>${year}</option>`);
-                html += '</select>';
+                html += '<div class="year-filter"><label>Filter Years:</label>';
+                allYears.forEach(year => {
+                    html += `<label><input type="checkbox" class="year-checkbox" value="${year}" checked onchange="applyFilters()">${year}</label>`;
+                });
+                html += '</div>';
                 html += '<label for="scoreRangeFilter">Filter Score Range:</label>';
                 html += '<select id="scoreRangeFilter" onchange="applyFilters()"><option value="">All Score Ranges</option>';
                 allScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
@@ -488,10 +493,11 @@
         }
 
         function applyFilters() {
-            const yearFilter = Array.from(document.getElementById('yearFilter').selectedOptions).map(opt => opt.value);
+            const yearCheckboxes = document.querySelectorAll('.year-checkbox:checked');
+            const selectedYears = Array.from(yearCheckboxes).map(cb => cb.value);
             const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
             const filteredData = lastData.filter(row => {
-                const yearMatch = yearFilter.length === 0 || yearFilter.includes(row.Year.toString());
+                const yearMatch = selectedYears.length === 0 || selectedYears.includes(row.Year.toString());
                 const rangeMatch = !scoreRangeFilter || (() => {
                     const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
                     const range = parseRange(scoreRangeFilter);
