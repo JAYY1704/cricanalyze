@@ -101,6 +101,8 @@
         .table-container {
             width: 100%;
             overflow-x: auto;
+            max-height: 400px; /* For sticky headers */
+            overflow-y: auto;
         }
         table {
             width: 100%;
@@ -117,6 +119,9 @@
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
+            position: sticky; /* For sticky headers */
+            top: 0;
+            z-index: 1;
         }
         th:hover {
             background-color: #45a049;
@@ -126,6 +131,9 @@
         }
         tr:hover {
             background-color: #ddd;
+        }
+        tr.highlight { /* For highlighting matching rows */
+            background-color: #ffeb3b;
         }
         .filter-group {
             display: flex;
@@ -309,8 +317,7 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    matches = XLSX.utils.sheet_to_json(sheet);
+                    matches = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
                     filteredMatches = matches;
                     document.getElementById('output').textContent = `File loaded successfully! ${matches.length} matches found.`;
                     console.log("Loaded matches:", matches);
@@ -517,7 +524,10 @@
                 html += '<label for="scoreRangeFilter">Filter Score Range:</label>';
                 html += '<select id="scoreRangeFilter" onchange="applyFilters()"><option value="">All Score Ranges</option>';
                 allScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
-                html += '</select></div>';
+                html += '</select>';
+                html += '<label for="resultFilter">Filter Result:</label>'; // Added Filter by Result
+                html += '<select id="resultFilter" onchange="applyFilters()"><option value="">All Results</option><option value="chased">Chased</option><option value="defend">Defend</option></select>';
+                html += '</div>';
 
                 html += '<div class="table-container"><table><thead><tr>';
                 const headers = over <= 20 ? 
@@ -560,7 +570,7 @@
                     lastData.push(rowData);
                 });
 
-                html += generateTableRows(lastData);
+                html += generateTableRows(lastData, over, runs, wickets);
                 html += '</tbody></table></div>';
 
                 const probabilities = calculateProbabilities(lastData);
@@ -572,10 +582,12 @@
             addSortFunctionality();
         }
 
-        function generateTableRows(data) {
+        function generateTableRows(data, over, runs, wickets) {
             let html = '';
             data.forEach(row => {
-                html += '<tr>';
+                const overKey = `${over}ov`;
+                const isMatch = over <= 20 && row[overKey] === `${runs}/${wickets}`;
+                html += `<tr ${isMatch ? 'class="highlight"' : ''}>`;
                 Object.values(row).forEach(value => html += `<td>${value}</td>`);
                 html += '</tr>';
             });
@@ -584,6 +596,9 @@
 
         function applyFilters() {
             const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
+            const resultFilter = document.getElementById('resultFilter').value; // Added for result filter
+            const [runs, wickets] = parseScore(document.getElementById('scoreInput').value);
+            const over = parseInt(document.getElementById('overSelect').value);
             const filteredData = lastData.filter(row => {
                 const yearMatch = selectedYears.length === 0 || selectedYears.includes(row.Year.toString());
                 const rangeMatch = !scoreRangeFilter || (() => {
@@ -591,9 +606,10 @@
                     const range = parseRange(scoreRangeFilter);
                     return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
                 })();
-                return yearMatch && rangeMatch;
+                const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter; // Added result filtering
+                return yearMatch && rangeMatch && resultMatch;
             });
-            document.getElementById('tableBody').innerHTML = generateTableRows(filteredData);
+            document.getElementById('tableBody').innerHTML = generateTableRows(filteredData, over, runs, wickets);
             const probabilities = calculateProbabilities(filteredData);
             const output = document.getElementById('output');
             output.innerHTML = output.innerHTML.split('<p>Probability')[0] + 
