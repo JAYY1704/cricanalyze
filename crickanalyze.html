@@ -192,15 +192,53 @@
             z-index: 1000;
         }
         .modal-content {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        max-width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        position: relative;
+        color: #333; /* Default text color for modal content */
+    }
+
+    /* Specific Styles for Full Details Output Table */
+    #fullDetailsOutput table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1em;
+        color: #333; /* Dark text color for visibility */
+    }
+
+    #fullDetailsOutput th,
+    #fullDetailsOutput td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+        color: #333; /* Ensure dark text */
+    }
+
+    #fullDetailsOutput th {
+        background: #2a5298; /* Keep header background */
+        color: white; /* White text for headers */
+        cursor: pointer;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    #fullDetailsOutput td {
+        background: #fff; /* White background for cells */
+    }
+
+    #fullDetailsOutput tr:nth-child(even) td {
+        background: #f5f6fa; /* Light gray for even rows */
+    }
+
+    #fullDetailsOutput tr:hover td {
+        background: #e8eaf6; /* Hover effect */
+    }
         .modal-content h2 {
             margin-top: 0;
             font-size: 1.5em;
