@@ -7,165 +7,177 @@
     <title>Cricket Chase Analyzer</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
-            padding: 10px;
-            background-color: #f4f4f4;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/><path d="M20 80 Q50 50 80 80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/></svg>') repeat;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            color: #fff;
         }
         .container {
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             flex-grow: 1;
             box-sizing: border-box;
+            color: #333;
         }
         h1 {
             text-align: center;
-            color: #333;
-            font-size: 1.8em;
-            margin: 0 0 10px;
+            color: #1e3c72;
+            font-size: 2em;
+            margin: 0 0 15px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
         label {
             display: block;
             margin: 5px 0 2px;
-            font-weight: bold;
-            font-size: 1em;
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #2a5298;
         }
         input, select, button {
             width: 100%;
             padding: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             box-sizing: border-box;
             font-size: 1em;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            -webkit-appearance: none;
-            appearance: none;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            background: #f9f9f9;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #2a5298;
+            box-shadow: 0 0 5px rgba(42, 82, 152, 0.5);
+            outline: none;
         }
         select {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="black"/></svg>') no-repeat right 10px center;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#2a5298"/></svg>') no-repeat right 10px center;
             background-size: 12px;
         }
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
         }
         button {
             flex: 1;
             padding: 12px;
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 4px;
-            font-size: 1em;
-            min-width: 100px;
-            touch-action: manipulation;
+            border-radius: 6px;
+            font-size: 1.1em;
+            min-width: 120px;
+            transition: transform 0.2s, background 0.3s;
         }
         button:hover {
-            background-color: #45a049;
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
         }
         #resetBtn {
-            background-color: #f44336;
+            background: linear-gradient(135deg, #f44336, #d32f2f);
         }
         #resetBtn:hover {
-            background-color: #d32f2f;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
         }
         #downloadBtn {
-            background-color: #2196F3;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
         }
         #downloadBtn:hover {
-            background-color: #1976D2;
+            background: linear-gradient(135deg, #1976D2, #0d47a1);
         }
         #viewDetailsBtn {
-            background-color: #FF9800; /* Orange for distinction */
+            background: linear-gradient(135deg, #FF9800, #F57C00);
         }
         #viewDetailsBtn:hover {
-            background-color: #F57C00;
+            background: linear-gradient(135deg, #F57C00, #e65100);
         }
-        #viewDetailsBtn:disabled {
-            background-color: #B0BEC5; /* Grayed out when disabled */
+        #viewDetailsBtn:disabled, #downloadBtn:disabled {
+            background: #B0BEC5;
             cursor: not-allowed;
+            transform: none;
         }
         #output {
-            background: #f9f9f9;
-            padding: 15px;
-            border: 1px solid #ddd;
-            min-height: 200px;
+            background: #fff;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            min-height: 250px;
             overflow-y: auto;
             overflow-x: auto;
             flex-grow: 1;
-            -webkit-overflow-scrolling: touch;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         .table-container {
             width: 100%;
             overflow-x: auto;
-            max-height: 400px; /* For sticky headers */
+            max-height: 400px;
             overflow-y: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-family: Arial, sans-serif;
             font-size: 1em;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
         th {
-            background-color: #4CAF50;
+            background: #2a5298;
             color: white;
             cursor: pointer;
-            position: sticky; /* For sticky headers */
+            position: sticky;
             top: 0;
             z-index: 1;
         }
         th:hover {
-            background-color: #45a049;
+            background: #1e3c72;
         }
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background: #f5f6fa;
         }
         tr:hover {
-            background-color: #ddd;
+            background: #e8eaf6;
         }
-        tr.highlight { /* For highlighting matching rows */
-            background-color: #ffeb3b;
+        tr.highlight {
+            background: #fff9c4;
         }
         .filter-group {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 6px;
         }
-        .filter-group select {
+        .filter-group select, .year-filter-btn {
             flex: 1;
             min-width: 150px;
         }
         .year-filter-btn {
-            flex: 1;
-            min-width: 150px;
-            background-color: #2196F3;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
             border: none;
             padding: 12px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
         }
         .year-filter-btn:hover {
-            background-color: #1976D2;
+            background: linear-gradient(135deg, #1976D2, #0d47a1);
         }
         .modal {
             display: none;
@@ -174,69 +186,63 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.6);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
         .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
             max-width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
             position: relative;
         }
         .modal-content h2 {
             margin-top: 0;
-            font-size: 1.2em;
+            font-size: 1.5em;
+            color: #1e3c72;
         }
         .year-checkbox-label {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 8px 0;
-            font-size: 1em;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 1.1em;
             cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
         .year-checkbox-label input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             margin: 0;
             cursor: pointer;
-            -webkit-appearance: checkbox;
-            appearance: checkbox;
         }
         .modal-buttons {
             margin-top: 20px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: flex-end;
         }
         .modal-buttons button {
-            flex: none;
             width: auto;
-            min-width: 80px;
+            min-width: 100px;
         }
         @media (max-width: 600px) {
-            body { padding: 5px; }
-            .container { padding: 10px; }
-            h1 { font-size: 1.5em; }
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            h1 { font-size: 1.6em; }
             input, select, button { padding: 10px; font-size: 0.95em; }
-            .button-group, .filter-group { flex-direction: column; gap: 8px; }
-            button, .year-filter-btn { padding: 12px; font-size: 0.95em; }
-            #output { font-size: 0.9em; min-height: 150px; }
-            th, td { font-size: 0.9em; padding: 6px; }
+            .button-group, .filter-group { flex-direction: column; gap: 10px; }
+            button, .year-filter-btn { padding: 10px; font-size: 1em; }
+            #output { min-height: 200px; }
+            th, td { font-size: 0.9em; padding: 8px; }
             .modal-content { padding: 15px; max-width: 95%; }
-            .year-checkbox-label input[type="checkbox"] { width: 18px; height: 18px; }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -247,6 +253,12 @@
         
         <label for="scoreInput">Score/Wickets (e.g., 20/1):</label>
         <input type="text" id="scoreInput" placeholder="Enter score/wickets">
+        
+        <label for="runTolerance">Run Tolerance (±):</label>
+        <input type="number" id="runTolerance" value="5" min="0" max="20">
+        
+        <label for="wicketTolerance">Wicket Tolerance (±):</label>
+        <input type="number" id="wicketTolerance" value="1" min="0" max="3">
         
         <label for="overSelect">Select Over:</label>
         <select id="overSelect">
@@ -312,7 +324,7 @@
         let selectedYears = [];
 
         const overSelect = document.getElementById('overSelect');
-        
+
         function populateOverSelect() {
             overSelect.innerHTML = '<option value="">-- Select Over --</option>';
             for (let i = 1; i <= 40; i++) {
@@ -321,9 +333,6 @@
                 option.text = `${i}th Over`;
                 overSelect.appendChild(option);
             }
-            overSelect.style.display = 'none';
-            overSelect.offsetHeight;
-            overSelect.style.display = 'block';
         }
         populateOverSelect();
 
@@ -392,6 +401,10 @@
             };
         }
 
+        function isSimilarScore(histRuns, histWickets, targetRuns, targetWickets, runTolerance, wicketTolerance) {
+            return Math.abs(histRuns - targetRuns) <= runTolerance && Math.abs(histWickets - targetWickets) <= wicketTolerance;
+        }
+
         function openYearFilterModal() {
             const modal = document.getElementById('yearFilterModal');
             const checkboxesDiv = document.getElementById('yearCheckboxes');
@@ -418,6 +431,8 @@
         function processInput() {
             const scoreWickets = document.getElementById('scoreInput').value.trim();
             const over = parseInt(document.getElementById('overSelect').value);
+            const runTolerance = parseInt(document.getElementById('runTolerance').value);
+            const wicketTolerance = parseInt(document.getElementById('wicketTolerance').value);
             const rangeStr = document.getElementById('rangeSelect').value;
             const [runs, wickets] = parseScore(scoreWickets);
             const output = document.getElementById('output');
@@ -433,6 +448,7 @@
 
             let compareData = matches;
             const selectedRange = parseRange(rangeStr);
+            const overKey = `${over}over`;
 
             if (over <= 20) {
                 if (over === 20) {
@@ -476,7 +492,6 @@
                 });
             }
 
-            const overKey = `${over}over`;
             const yearMatches = {};
             let totalMatches = 0;
             let runDifference = null;
@@ -486,7 +501,7 @@
                     const score = match[overKey];
                     if (!score) return;
                     const [histRuns, histWickets] = score.split('/').map(Number);
-                    if (histRuns === runs && histWickets === wickets) {
+                    if (isSimilarScore(histRuns, histWickets, runs, wickets, runTolerance, wicketTolerance)) {
                         const year = match['year'];
                         if (!yearMatches[year]) yearMatches[year] = [];
                         yearMatches[year].push({ match, index });
@@ -528,17 +543,17 @@
                 return parseInt(a.split('-')[0]) - parseInt(b.split('-')[0]);
             });
 
-            let html = `<p>Analysis for ${runs}/${wickets} after Over ${over}<br>`;
+            let html = `<p>Analysis for ${runs}/${wickets} after Over ${over} (±${runTolerance} runs, ±${wicketTolerance} wickets)<br>`;
             if (over > 20 || selectedRange) {
                 html += `20-Over Score Range: ${rangeStr || `${scoreRange[0]}-${scoreRange[1] === Infinity ? '200+' : scoreRange[1]}`}<br>`;
             }
             if (over > 20 && runDifference !== null) {
                 html += `Run Difference (20ov - ${over}ov): ${runDifference}<br>`;
             }
-            html += `Total matches${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`}: ${totalMatches}</p>`;
+            html += `Total matches: ${totalMatches}</p>`;
 
             if (totalMatches === 0) {
-                html += `<p>No matches found${over <= 20 ? ` with exactly ${runs}/${wickets}` : ` with run difference ${runDifference}`} after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
+                html += `<p>No matches found within tolerance after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
             } else {
                 html += '<div class="filter-group">';
                 html += '<button class="year-filter-btn" onclick="openYearFilterModal()">Filter Years</button>';
@@ -567,10 +582,10 @@
 
                 sortedRows.sort((a, b) => a.year - b.year);
                 lastData = [];
-                selectedYears = allYears.map(String); // Initially select all years
+                selectedYears = allYears.map(String);
 
                 sortedRows.forEach(({ year, match }) => {
-                    const rowData = { Year: year, originalMatch: match }; // Store full match object
+                    const rowData = { Year: year, originalMatch: match };
                     if (over <= 20) {
                         if (over < 6) rowData['6ov'] = match['6over'] || "N/A";
                         if (over < 10) rowData['10ov'] = match['10over'] || "N/A";
@@ -608,10 +623,14 @@
             let html = '';
             data.forEach(row => {
                 const overKey = `${over}ov`;
-                const isMatch = over <= 20 && row[overKey] === `${runs}/${wickets}`;
+                const isMatch = over <= 20 && row[overKey] && isSimilarScore(
+                    ...row[overKey].split('/').map(Number), runs, wickets,
+                    parseInt(document.getElementById('runTolerance').value),
+                    parseInt(document.getElementById('wicketTolerance').value)
+                );
                 html += `<tr ${isMatch ? 'class="highlight"' : ''}>`;
                 Object.entries(row).forEach(([key, value]) => {
-                    if (key !== 'originalMatch') html += `<td>${value}</td>`; // Skip originalMatch in main table
+                    if (key !== 'originalMatch') html += `<td>${value}</td>`;
                 });
                 html += '</tr>';
             });
@@ -697,6 +716,8 @@
             document.getElementById('scoreInput').value = '';
             document.getElementById('overSelect').value = '';
             document.getElementById('rangeSelect').value = '';
+            document.getElementById('runTolerance').value = '5';
+            document.getElementById('wicketTolerance').value = '1';
             document.getElementById('output').textContent = "Upload your Excel file to start.";
             document.getElementById('downloadBtn').disabled = true;
             document.getElementById('viewDetailsBtn').disabled = true;
@@ -727,7 +748,6 @@
                 return;
             }
 
-            // Apply the same filters as in applyFilters()
             const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
             const resultFilter = document.getElementById('resultFilter').value;
             const filteredData = lastData.filter(row => {
@@ -747,10 +767,8 @@
                 return;
             }
 
-            // Get all unique keys from the filtered original match data
             const allKeys = [...new Set(filteredData.flatMap(row => Object.keys(row.originalMatch)))];
 
-            // Build the table
             let html = '<table><thead><tr>';
             allKeys.forEach(key => html += `<th>${key}</th>`);
             html += '</tr></thead><tbody>';
@@ -768,7 +786,6 @@
             outputDiv.innerHTML = html;
             modal.style.display = 'flex';
 
-            // Add sorting functionality to the modal table
             addModalSortFunctionality();
         }
 
