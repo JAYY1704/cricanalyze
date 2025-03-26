@@ -14,6 +14,7 @@
             --secondary-color: #00ff00; /* Lime Green */
             --text-color: #fff;
             --container-background: rgba(0, 0, 0, 0.85);
+            --select-background: rgba(0, 0, 0, 0.2);
             --button-gradient-start: #00ff00;
             --button-gradient-end: #008000;
             --reset-gradient-start: #ff4500;
@@ -38,6 +39,7 @@
             --secondary-color: #ffffff; /* White */
             --text-color: #fff;
             --container-background: rgba(0, 0, 0, 0.9);
+            --select-background: rgba(0, 0, 0, 0.3);
             --button-gradient-start: #0000ff;
             --button-gradient-end: #00008b;
             --reset-gradient-start: #ff00ff;
@@ -60,6 +62,7 @@
             --secondary-color: #a0522d; /* Brown */
             --text-color: #000;
             --container-background: rgba(255, 245, 238, 0.9); /* Light Sepia */
+            --select-background: rgba(255, 245, 238, 0.5);
             --button-gradient-start: #deb887;
             --button-gradient-end: #cd853f;
             --reset-gradient-start: #8b4513;
@@ -82,6 +85,7 @@
             --secondary-color: #8a2be2; /* Blue Violet */
             --text-color: #fff;
             --container-background: rgba(0, 0, 0, 0.85);
+            --select-background: rgba(0, 0, 0, 0.2);
             --button-gradient-start: #ff69b4;
             --button-gradient-end: #ff1493;
             --reset-gradient-start: #ff00ff;
@@ -97,27 +101,27 @@
             --table-row-highlight: rgba(255, 20, 147, 0.4);
         }
 
-        /* Minimalist Theme */
-        .theme-minimalist {
-            --background-image: none;
-            --background-color: #d3d3d3; /* Light Gray */
-            --primary-color: #808080; /* Gray */
-            --secondary-color: #ffffff; /* White */
-            --text-color: #000;
-            --container-background: rgba(255, 255, 255, 0.95);
-            --button-gradient-start: #808080;
-            --button-gradient-end: #696969;
-            --reset-gradient-start: #ff6347;
-            --reset-gradient-end: #dc143c;
-            --download-gradient-start: #4682b4;
-            --download-gradient-end: #2f4f4f;
-            --view-gradient-start: #a9a9a9;
-            --view-gradient-end: #696969;
-            --table-header-bg-start: #696969;
-            --table-header-bg-end: #2f4f4f;
-            --table-row-even: rgba(211, 211, 211, 0.5);
-            --table-row-hover: rgba(169, 169, 169, 0.3);
-            --table-row-highlight: rgba(169, 169, 169, 0.5);
+        /* Emerald Pitch Theme */
+        .theme-emerald {
+            --background-image: url('https://example.com/emerald-pitch-image.jpg');
+            --primary-color: #2ecc71; /* Emerald Green */
+            --secondary-color: #006d5b; /* Dark Teal */
+            --text-color: #fff;
+            --container-background: rgba(0, 0, 0, 0.9);
+            --select-background: rgba(0, 0, 0, 0.3);
+            --button-gradient-start: #2ecc71;
+            --button-gradient-end: #27ae60;
+            --reset-gradient-start: #e74c3c;
+            --reset-gradient-end: #c0392b;
+            --download-gradient-start: #006d5b;
+            --download-gradient-end: #004d40;
+            --view-gradient-start: #27ae60;
+            --view-gradient-end: #219653;
+            --table-header-bg-start: #006d5b;
+            --table-header-bg-end: #004d40;
+            --table-row-even: rgba(255, 255, 255, 0.1);
+            --table-row-hover: rgba(46, 204, 113, 0.2);
+            --table-row-highlight: rgba(46, 204, 113, 0.4);
         }
 
         body {
@@ -175,21 +179,35 @@
             100% { text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9), 0 0 25px var(--primary-color); }
         }
 
-        #themeSelect {
+        #themeSelect, #overSelect {
             padding: 10px;
             font-size: 1em;
             border-radius: 8px;
             border: 2px solid var(--primary-color);
-            background: transparent;
+            background: var(--select-background);
             color: var(--text-color);
             cursor: pointer;
             transition: all 0.3s ease;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="8"><polygon points="0,0 16,0 8,8" fill="%23ffd700"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
         }
 
-        #themeSelect:focus {
+        #themeSelect:focus, #overSelect:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 10px var(--secondary-color);
             outline: none;
+        }
+
+        #themeSelect option, #overSelect option {
+            color: #000; /* Default black for dropdown options */
+            background: #fff;
+        }
+
+        .theme-historical #themeSelect option, .theme-historical #overSelect option {
+            color: #000; /* Black for Historical theme options */
         }
 
         label {
@@ -201,7 +219,7 @@
             text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
         }
 
-        input, select {
+        input, select:not(#themeSelect):not(#overSelect) {
             width: 100%;
             padding: 15px;
             margin-bottom: 20px;
@@ -215,13 +233,13 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
-        input:focus, select:focus {
+        input:focus, select:not(#themeSelect):not(#overSelect):focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 15px var(--secondary-color);
             outline: none;
         }
 
-        select {
+        select:not(#themeSelect):not(#overSelect) {
             background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="8"><polygon points="0,0 16,0 8,8" fill="%23ffd700"/></svg>') no-repeat right 15px center;
             background-size: 16px;
             appearance: none;
@@ -477,7 +495,7 @@
             th, td { font-size: 0.95em; padding: 10px; }
             .modal-content { padding: 20px; max-width: 98%; }
             .year-checkbox-label { font-size: 1.1em; }
-            #themeSelect { width: 100%; margin-top: 10px; }
+            #themeSelect, #overSelect { width: 100%; margin-top: 10px; }
             .header { flex-direction: column; align-items: flex-start; }
         }
     </style>
@@ -492,7 +510,7 @@
                 <option value="theme-night">Night Match</option>
                 <option value="theme-historical">Historical</option>
                 <option value="theme-vibrant">Vibrant</option>
-                <option value="theme-minimalist">Minimalist</option>
+                <option value="theme-emerald">Emerald Pitch</option>
             </select>
         </div>
         
