@@ -9,7 +9,7 @@
         body {
             font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -27,12 +27,12 @@
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             flex-grow: 1;
             box-sizing: border-box;
             position: relative;
@@ -47,12 +47,12 @@
         }
         .theme-toggle {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
         }
         .theme-toggle select {
-            padding: 8px;
-            font-size: 1em;
+            padding: 6px;
+            font-size: 0.9em;
             border-radius: 6px;
             border: 2px solid;
             background: #f9f9f9;
@@ -78,21 +78,21 @@
         }
         h1 {
             text-align: center;
-            font-size: 2em;
-            margin: 0 0 15px;
+            font-size: 1.8em;
+            margin: 0 0 10px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
         body.classic-mode h1 {
             color: #1e3c72;
         }
         body.dark-mode h1 {
-            color: #cccccc; /* Changed to match label color in dark mode */
+            color: #cccccc;
         }
         label {
             display: block;
             margin: 5px 0 2px;
             font-weight: 600;
-            font-size: 1.1em;
+            font-size: 1em;
         }
         body.classic-mode label {
             color: #2a5298;
@@ -102,10 +102,10 @@
         }
         input, select, button {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
             box-sizing: border-box;
-            font-size: 1em;
+            font-size: 0.95em;
             border-radius: 6px;
             border: 2px solid;
             transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
@@ -143,17 +143,18 @@
         }
         .button-group {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
+            flex-direction: column; /* Stack buttons vertically on mobile */
         }
         button {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             cursor: pointer;
             border-radius: 6px;
-            font-size: 1.1em;
-            min-width: 120px;
+            font-size: 1em;
+            min-width: 100px;
             transition: transform 0.2s, background 0.3s;
         }
         body.classic-mode button {
@@ -216,14 +217,15 @@
             color: #b0b0b0;
         }
         #output {
-            padding: 20px;
+            padding: 15px;
             border: 2px solid;
             border-radius: 6px;
-            min-height: 250px;
+            min-height: 200px;
             overflow-y: auto;
             overflow-x: auto;
             flex-grow: 1;
             box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
         body.classic-mode #output {
             background: #fff;
@@ -236,18 +238,19 @@
         .table-container {
             width: 100%;
             overflow-x: auto;
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 1em;
+            font-size: 0.9em;
         }
         th, td {
             border: 1px solid;
-            padding: 10px;
+            padding: 8px;
             text-align: left;
+            white-space: nowrap; /* Prevent text wrapping */
         }
         body.classic-mode th,
         body.classic-mode td {
@@ -262,6 +265,7 @@
             position: sticky;
             top: 0;
             z-index: 1;
+            background: inherit; /* Ensure sticky header inherits background */
         }
         body.classic-mode th {
             background: #2a5298;
@@ -297,10 +301,11 @@
         }
         .filter-group {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
             padding: 10px;
             border-radius: 6px;
+            flex-direction: column; /* Stack filters vertically on mobile */
         }
         body.classic-mode .filter-group {
             background: rgba(255, 255, 255, 0.8);
@@ -310,11 +315,11 @@
         }
         .filter-group select, .year-filter-btn {
             flex: 1;
-            min-width: 150px;
+            min-width: 100%;
         }
         .year-filter-btn {
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 6px;
             cursor: pointer;
         }
@@ -345,9 +350,9 @@
             z-index: 1000;
         }
         .modal-content {
-            padding: 25px;
+            padding: 15px;
             border-radius: 10px;
-            max-width: 90%;
+            max-width: 95%;
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
@@ -364,13 +369,14 @@
         #fullDetailsOutput table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 1em;
+            font-size: 0.9em;
         }
         #fullDetailsOutput th,
         #fullDetailsOutput td {
             border: 1px solid;
-            padding: 10px;
+            padding: 8px;
             text-align: left;
+            white-space: nowrap;
         }
         body.classic-mode #fullDetailsOutput th,
         body.classic-mode #fullDetailsOutput td {
@@ -416,7 +422,7 @@
         }
         .modal-content h2 {
             margin-top: 0;
-            font-size: 1.5em;
+            font-size: 1.4em;
         }
         body.classic-mode .modal-content h2 {
             color: #1e3c72;
@@ -427,9 +433,9 @@
         .year-checkbox-label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-            font-size: 1.1em;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 1em;
             cursor: pointer;
         }
         body.classic-mode .year-checkbox-label {
@@ -439,33 +445,70 @@
             color: #e0e0e0;
         }
         .year-checkbox-label input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
             margin: 0;
             cursor: pointer;
         }
         .modal-buttons {
-            margin-top: 20px;
+            margin-top: 15px;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
         .modal-buttons button {
             width: auto;
-            min-width: 100px;
+            min-width: 80px;
+        }
+        .back-to-top {
+            position: sticky;
+            bottom: 10px;
+            right: 10px;
+            float: right;
+            padding: 8px;
+            font-size: 0.9em;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #666666;
+            color: #fff;
+            border: none;
+            transition: background 0.3s;
+        }
+        body.classic-mode .back-to-top {
+            background: #2a5298;
+        }
+        body.dark-mode .back-to-top {
+            background: #555555;
+        }
+        .back-to-top:hover {
+            background: #444444;
+        }
+        body.classic-mode .back-to-top:hover {
+            background: #1e3c72;
+        }
+        body.dark-mode .back-to-top:hover {
+            background: #666666;
         }
         @media (max-width: 600px) {
-            body { padding: 10px; }
-            .container { padding: 15px; }
-            h1 { font-size: 1.6em; }
-            input, select, button { padding: 10px; font-size: 0.95em; }
-            .button-group, .filter-group { flex-direction: column; gap: 10px; }
-            button, .year-filter-btn { padding: 10px; font-size: 1em; }
-            #output { min-height: 200px; }
-            th, td { font-size: 0.9em; padding: 8px; }
-            .modal-content { padding: 15px; max-width: 95%; }
-            .theme-toggle { top: 10px; right: 10px; }
-            .theme-toggle select { padding: 6px; font-size: 0.9em; }
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            h1 { font-size: 1.4em; }
+            label { font-size: 0.9em; }
+            input, select, button { padding: 8px; font-size: 0.85em; }
+            .button-group, .filter-group { gap: 8px; }
+            button, .year-filter-btn { padding: 8px; font-size: 0.9em; min-width: 100%; }
+            #output { min-height: 150px; padding: 10px; }
+            th, td { font-size: 0.8em; padding: 6px; }
+            .modal-content { padding: 10px; max-width: 98%; }
+            .theme-toggle { top: 5px; right: 5px; }
+            .theme-toggle select { padding: 5px; font-size: 0.85em; }
+            .table-container { max-height: 300px; }
+            .modal-content h2 { font-size: 1.2em; }
+            .year-checkbox-label { font-size: 0.9em; }
+            .year-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; }
+            .modal-buttons button { min-width: 70px; }
+            .back-to-top { padding: 6px; font-size: 0.8em; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -855,6 +898,7 @@
 
                 const probabilities = calculateProbabilities(lastData);
                 html += `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>`;
+                html += '<button class="back-to-top" onclick="scrollToTop()">Back to Top</button>';
             }
 
             output.innerHTML = html;
@@ -900,7 +944,8 @@
             const probabilities = calculateProbabilities(filteredData);
             const output = document.getElementById('output');
             output.innerHTML = output.innerHTML.split('<p>Probability')[0] + 
-                `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>`;
+                `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>` +
+                '<button class="back-to-top" onclick="scrollToTop()">Back to Top</button>';
             document.getElementById('viewDetailsBtn').disabled = filteredData.length === 0;
             addSortFunctionality();
         }
@@ -1013,7 +1058,7 @@
 
             const allKeys = [...new Set(filteredData.flatMap(row => Object.keys(row.originalMatch)))];
 
-            let html = '<table><thead><tr>';
+            let html = '<div class="table-container"><table><thead><tr>';
             allKeys.forEach(key => html += `<th>${key}</th>`);
             html += '</tr></thead><tbody>';
 
@@ -1026,7 +1071,7 @@
                 html += '</tr>';
             });
 
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
             outputDiv.innerHTML = html;
             modal.style.display = 'flex';
 
@@ -1076,6 +1121,10 @@
 
         function closeFullDetailsModal() {
             document.getElementById('fullDetailsModal').style.display = 'none';
+        }
+
+        function scrollToTop() {
+            document.getElementById('output').scrollTop = 0;
         }
     </script>
 </body>
