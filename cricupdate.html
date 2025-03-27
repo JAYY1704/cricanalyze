@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Cricket Chase Analyzer</title>
+    <style>
+        /* Your existing CSS remains unchanged */
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.classic-mode {
+            background: linear-gradient(135deg, #1e3c72, #2a5298), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/><path d="M20 80 Q50 50 80 80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/></svg>') repeat;
+            color: #fff;
+        }
+        body.dark-mode {
+            background: #2b2b2b;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            box-sizing: border-box;
+            position: relative;
+        }
+        body.classic-mode .container {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+        body.dark-mode .container {
+            background: #333333;
+            color: #e0e0e0;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .theme-toggle select {
+            padding: 6px;
+            font-size: 0.9em;
+            border-radius: 6px;
+            border: 2px solid;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        body.classic-mode .theme-toggle select {
+            border-color: #ddd;
+        }
+        body.dark-mode .theme-toggle select {
+            border-color: #4a4a4a;
+            background: #404040;
+            color: #e0e0e0;
+        }
+        .theme-toggle select:focus {
+            outline: none;
+        }
+        body.classic-mode .theme-toggle select:focus {
+            border-color: #2a5298;
+        }
+        body.dark-mode .theme-toggle select:focus {
+            border-color: #ffffff;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin: 0 0 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        body.classic-mode h1 {
+            color: #1e3c72;
+        }
+        body.dark-mode h1 {
+            color: #cccccc;
+        }
+        label {
+            display: block;
+            margin: 5px 0 2px;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        body.classic-mode label {
+            color: #2a5298;
+        }
+        body.dark-mode label {
+            color: #cccccc;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 0.95em;
+            border-radius: 6px;
+            border: 2px solid;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+        body.classic-mode input,
+        body.classic-mode select {
+            border-color: #ddd;
+            background: #f9f9f9;
+        }
+        body.dark-mode input,
+        body.dark-mode select {
+            border-color: #4a4a4a;
+            background: #404040;
+            color: #e0e0e0;
+        }
+        input:focus, select:focus {
+            box-shadow: 0 0 5px rgba(42, 82, 152, 0.5);
+            outline: none;
+        }
+        body.classic-mode input:focus,
+        body.classic-mode select:focus {
+            border-color: #2a5298;
+        }
+        body.dark-mode input:focus,
+        body.dark-mode select:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        select {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#2a5298"/></svg>') no-repeat right 10px center;
+            background-size: 12px;
+        }
+        body.dark-mode select {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#ffffff"/></svg>') no-repeat right 10px center;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-direction: column; /* Stack buttons vertically on mobile */
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1em;
+            min-width: 100px;
+            transition: transform 0.2s, background 0.3s;
+        }
+        body.classic-mode button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        body.dark-mode button {
+            background: #ffffff;
+            color: #2b2b2b;
+        }
+        body.classic-mode button:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+        }
+        body.dark-mode button:hover {
+            background: #e0e0e0;
+        }
+        body.classic-mode #resetBtn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        body.dark-mode #resetBtn {
+            background: #ff5555;
+            color: #2b2b2b;
+        }
+        body.classic-mode #resetBtn:hover {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+        }
+        body.dark-mode #resetBtn:hover {
+            background: #e64444;
+        }
+        body.classic-mode #downloadBtn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        body.dark-mode #downloadBtn {
+            background: #55aaff;
+            color: #2b2b2b;
+        }
+        body.classic-mode #downloadBtn:hover {
+            background: linear-gradient(135deg, #1976D2, #0d47a1);
+        }
+        body.dark-mode #downloadBtn:hover {
+            background: #4499ee;
+        }
+        body.classic-mode #viewDetailsBtn {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+        body.dark-mode #viewDetailsBtn {
+            background: #ffdd55;
+            color: #2b2b2b;
+        }
+        body.classic-mode #viewDetailsBtn:hover {
+            background: linear-gradient(135deg, #F57C00, #e65100);
+        }
+        body.dark-mode #viewDetailsBtn:hover {
+            background: #eecc44;
+        }
+        #viewDetailsBtn:disabled, #downloadBtn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+            transform: none;
+            color: #b0b0b0;
+        }
+        #output {
+            padding: 15px;
+            border: 2px solid;
+            border-radius: 6px;
+            min-height: 200px;
+            overflow-y: auto;
+            overflow-x: auto;
+            flex-grow: 1;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        body.classic-mode #output {
+            background: #fff;
+            border-color: #ddd;
+        }
+        body.dark-mode #output {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        body.classic-mode th,
+        body.classic-mode td {
+            border-color: #ddd;
+        }
+        body.dark-mode th,
+        body.dark-mode td {
+            border-color: #4a4a4a;
+        }
+        th {
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: inherit; /* Ensure sticky header inherits background */
+        }
+        body.classic-mode th {
+            background: #2a5298;
+            color: white;
+        }
+        body.dark-mode th {
+            background: #404040;
+            color: #e0e0e0;
+        }
+        body.classic-mode th:hover {
+            background: #1e3c72;
+        }
+        body.dark-mode th:hover {
+            background: #4a4a4a;
+        }
+        body.classic-mode tr:nth-child(even) {
+            background: #f5f6fa;
+        }
+        body.dark-mode tr:nth-child(even) {
+            background: #3a3a3a;
+        }
+        body.classic-mode tr:hover {
+            background: #e8eaf6;
+        }
+        body.dark-mode tr:hover {
+            background: #4a4a4a;
+        }
+        tr.highlight {
+            background: #fff9c4;
+        }
+        body.dark-mode tr.highlight {
+            background: #555555;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px;
+            border-radius: 6px;
+            flex-direction: column; /* Stack filters vertically on mobile */
+        }
+        body.classic-mode .filter-group {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        body.dark-mode .filter-group {
+            background: #333333;
+        }
+        .filter-group select, .year-filter-btn {
+            flex: 1;
+            min-width: 100%;
+        }
+        .year-filter-btn {
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        body.classic-mode .year-filter-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+        body.dark-mode .year-filter-btn {
+            background: #ffffff;
+            color: #2b2b2b;
+        }
+        body.classic-mode .year-filter-btn:hover {
+            background: linear-gradient(135deg, #1976D2, #0d47a1);
+        }
+        body.dark-mode .year-filter-btn:hover {
+            background: #e0e0e0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        body.classic-mode .modal-content {
+            background: #fff;
+            color: #333;
+        }
+        body.dark-mode .modal-content {
+            background: #333333;
+            color: #e0e0e0;
+        }
+        #fullDetailsOutput table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        #fullDetailsOutput th,
+        #fullDetailsOutput td {
+            border: 1px solid;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        body.classic-mode #fullDetailsOutput th,
+        body.classic-mode #fullDetailsOutput td {
+            border-color: #ddd;
+            color: #333;
+        }
+        body.dark-mode #fullDetailsOutput th,
+        body.dark-mode #fullDetailsOutput td {
+            border-color: #4a4a4a;
+            color: #e0e0e0;
+        }
+        #fullDetailsOutput th {
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        body.classic-mode #fullDetailsOutput th {
+            background: #2a5298;
+            color: white;
+        }
+        body.dark-mode #fullDetailsOutput th {
+            background: #404040;
+            color: #e0e0e0;
+        }
+        body.classic-mode #fullDetailsOutput td {
+            background: #fff;
+        }
+        body.dark-mode #fullDetailsOutput td {
+            background: #333333;
+        }
+        body.classic-mode #fullDetailsOutput tr:nth-child(even) td {
+            background: #f5f6fa;
+        }
+        body.dark-mode #fullDetailsOutput tr:nth-child(even) td {
+            background: #3a3a3a;
+        }
+        body.classic-mode #fullDetailsOutput tr:hover td {
+            background: #e8eaf6;
+        }
+        body.dark-mode #fullDetailsOutput tr:hover td {
+            background: #4a4a4a;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+        body.classic-mode .modal-content h2 {
+            color: #1e3c72;
+        }
+        body.dark-mode .modal-content h2 {
+            color: #ffffff;
+        }
+        .year-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        body.classic-mode .year-checkbox-label {
+            color: #333;
+        }
+        body.dark-mode .year-checkbox-label {
+            color: #e0e0e0;
+        }
+        .year-checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .modal-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .modal-buttons button {
+            width: auto;
+            min-width: 80px;
+        }
+        .back-to-top {
+            position: sticky;
+            bottom: 10px;
+            right: 10px;
+            float: right;
+            padding: 8px;
+            font-size: 0.9em;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #666666;
+            color: #fff;
+            border: none;
+            transition: background 0.3s;
+        }
+        body.classic-mode .back-to-top {
+            background: #2a5298;
+        }
+        body.dark-mode .back-to-top {
+            background: #555555;
+        }
+        .back-to-top:hover {
+            background: #444444;
+        }
+        body.classic-mode .back-to-top:hover {
+            background: #1e3c72;
+        }
+        body.dark-mode .back-to-top:hover {
+            background: #666666;
+        }
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            h1 { font-size: 1.4em; }
+            label { font-size: 0.9em; }
+            input, select, button { padding: 8px; font-size: 0.85em; }
+            .button-group, .filter-group { gap: 8px; }
+            button, .year-filter-btn { padding: 8px; font-size: 0.9em; min-width: 100%; }
+            #output { min-height: 150px; padding: 10px; }
+            th, td { font-size: 0.8em; padding: 6px; }
+            .modal-content { padding: 10px; max-width: 98%; }
+            .theme-toggle { top: 5px; right: 5px; }
+            .theme-toggle select { padding: 5px; font-size: 0.85em; }
+            .table-container { max-height: 300px; }
+            .modal-content h2 { font-size: 1.2em; }
+            .year-checkbox-label { font-size: 0.9em; }
+            .year-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; }
+            .modal-buttons button { min-width: 70px; }
+            .back-to-top { padding: 6px; font-size: 0.8em; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="classic-mode">
+    <div class="container">
+        <div class="theme-toggle">
+            <select id="themeSelect" onchange="toggleTheme()">
+                <option value="classic-mode">Classic Mode</option>
+                <option value="dark-mode">Dark Mode</option>
+            </select>
+        </div>
+        <h1>Cricket Chase Analyzer</h1>
+        
+        <label for="scoreInput">Score/Wickets (e.g., 20/1):</label>
+        <input type="text" id="scoreInput" placeholder="Enter score/wickets">
+        
+        <label for="runTolerance">Run Tolerance (±):</label>
+        <input type="number" id="runTolerance" value="5" min="0" max="20">
+        
+        <label for="wicketTolerance">Wicket Tolerance (±):</label>
+        <input type="number" id="wicketTolerance" value="1" min="0" max="3">
+        
+        <label for="overSelect">Select Over:</label>
+        <select id="overSelect">
+            <option value="">-- Select Over --</option>
+        </select>
+        
+        <label for="rangeSelect">20-Over Score Range (Optional):</label>
+        <select id="rangeSelect">
+            <option value="">-- All Ranges --</option>
+            <option value="120-129">120-129</option>
+            <option value="130-139">130-139</option>
+            <option value="140-149">140-149</option>
+            <option value="150-159">150-159</option>
+            <option value="160-169">160-169</option>
+            <option value="170-179">170-179</option>
+            <option value="180-189">180-189</option>
+            <option value="190-199">190-199</option>
+            <option value="200+">200+</option>
+        </select>
+        
+        <div class="button-group">
+            <button onclick="processInput()">Submit</button>
+            <button id="resetBtn" onclick="resetForm()">Reset</button>
+            <button id="downloadBtn" onclick="downloadResults()" disabled>Download Results</button>
+            <button id="viewDetailsBtn" onclick="viewFullMatchDetails()" disabled>View Full Match Details</button>
+        </div>
+        
+        <div id="output">Loading data from GitHub...</div>
+    </div>
+
+    <div id="yearFilterModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Years</h2>
+            <div id="yearCheckboxes"></div>
+            <div class="modal-buttons">
+                <button onclick="applyYearFilter()">OK</button>
+                <button onclick="closeYearFilterModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullDetailsModal" class="modal">
+        <div class="modal-content">
+            <h2>Full Match Details</h2>
+            <div id="fullDetailsOutput" class="table-container"></div>
+            <div class="modal-buttons">
+                <button onclick="closeFullDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" 
+            onerror="alert('Failed to load SheetJS. Check internet or use a local copy.');"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js" 
+            onerror="alert('Failed to load PapaParse. Check internet or use a local copy.');"></script>
+    <script>
+        let matches = [];
+        let filteredMatches = [];
+        let firstInningsDone = false;
+        let scoreRange = null;
+        let targetRuns = null;
+        let lastData = null;
+        let allYears = [];
+        let allScoreRanges = [];
+        let selectedYears = [];
+
+        const overSelect = document.getElementById('overSelect');
+
+        function populateOverSelect() {
+            overSelect.innerHTML = '<option value="">-- Select Over --</option>';
+            for (let i = 1; i <= 40; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.text = `${i}th Over`;
+                overSelect.appendChild(option);
+            }
+        }
+        populateOverSelect();
+
+        function toggleTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('theme') || 'classic-mode';
+            document.getElementById('themeSelect').value = savedTheme;
+            document.body.className = savedTheme;
+            loadGoogleSpreadsheet();
+        };
+
+        function loadGoogleSpreadsheet() {
+            const url = 'https://raw.githubusercontent.com/jayy1704/cricanalyze/main/cricket_data.csv';
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    Papa.parse(data, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            matches = results.data;
+                            filteredMatches = matches;
+                            document.getElementById('output').textContent = `Data loaded successfully! ${matches.length} matches found.`;
+                            console.log("Loaded matches:", matches);
+                        },
+                        error: function(err) {
+                            throw new Error('PapaParse error: ' + err);
+                        }
+                    });
+                })
+                .catch(err => {
+                    alert('Error loading data: ' + err.message);
+                    document.getElementById('output').textContent = "Error loading data: " + err.message;
+                });
+        }
+
+        function parseScore(scoreWickets) {
+            const parts = scoreWickets.split('/');
+            if (parts.length !== 2) return [null, null];
+            const runs = parseInt(parts[0]);
+            const wickets = parseInt(parts[1]);
+            if (isNaN(runs) || isNaN(wickets) || wickets < 0 || wickets > 10) return [null, null];
+            return [runs, wickets];
+        }
+
+        function parseRange(rangeStr) {
+            if (!rangeStr) return null;
+            if (rangeStr === "200+") return [200, Infinity];
+            const [min, max] = rangeStr.split('-').map(Number);
+            return [min, max];
+        }
+
+        function calculateDifference(scoreLater, scoreEarlier) {
+            if (!scoreLater || !scoreEarlier) return "N/A";
+            const [runsLater, wicketsLater] = scoreLater.split('/').map(Number);
+            const [runsEarlier, wicketsEarlier] = scoreEarlier.split('/').map(Number);
+            const runDiff = runsLater - runsEarlier;
+            const wicketDiff = wicketsLater - wicketsEarlier;
+            return `${runDiff}/${wicketDiff}`;
+        }
+
+        function calculateProbabilities(data) {
+            const validResults = data.filter(row => 
+                row.Result.toLowerCase() === 'chased' || row.Result.toLowerCase() === 'defend'
+            );
+            const totalValid = validResults.length;
+            if (totalValid === 0) return { chased: 0, defend: 0 };
+            const chasedCount = validResults.filter(row => row.Result.toLowerCase() === 'chased').length;
+            const defendCount = validResults.filter(row => row.Result.toLowerCase() === 'defend').length;
+            return {
+                chased: totalValid > 0 ? (chasedCount / totalValid * 100).toFixed(2) : 0,
+                defend: totalValid > 0 ? (defendCount / totalValid * 100).toFixed(2) : 0
+            };
+        }
+
+        function isSimilarScore(histRuns, histWickets, targetRuns, targetWickets, runTolerance, wicketTolerance) {
+            return Math.abs(histRuns - targetRuns) <= runTolerance && Math.abs(histWickets - targetWickets) <= wicketTolerance;
+        }
+
+        function openYearFilterModal() {
+            const modal = document.getElementById('yearFilterModal');
+            const checkboxesDiv = document.getElementById('yearCheckboxes');
+            let html = '';
+            allYears.forEach(year => {
+                const isChecked = selectedYears.length === 0 || selectedYears.includes(year.toString());
+                html += `<label class="year-checkbox-label"><input type="checkbox" class="year-checkbox" value="${year}" ${isChecked ? 'checked' : ''}>${year}</label>`;
+            });
+            checkboxesDiv.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function closeYearFilterModal() {
+            document.getElementById('yearFilterModal').style.display = 'none';
+        }
+
+        function applyYearFilter() {
+            const yearCheckboxes = document.querySelectorAll('.year-checkbox:checked');
+            selectedYears = Array.from(yearCheckboxes).map(cb => cb.value);
+            closeYearFilterModal();
+            applyFilters();
+        }
+
+        function processInput() {
+            const scoreWickets = document.getElementById('scoreInput').value.trim();
+            const over = parseInt(document.getElementById('overSelect').value);
+            const runTolerance = parseInt(document.getElementById('runTolerance').value);
+            const wicketTolerance = parseInt(document.getElementById('wicketTolerance').value);
+            const rangeStr = document.getElementById('rangeSelect').value;
+            const [runs, wickets] = parseScore(scoreWickets);
+            const output = document.getElementById('output');
+
+            if (!scoreWickets || isNaN(over) || runs === null || wickets === null) {
+                output.textContent = "Please enter valid score/wickets (e.g., '20/1') and select an over.";
+                return;
+            }
+            if (matches.length === 0) {
+                output.textContent = "Please wait for the data to load from GitHub.";
+                return;
+            }
+
+            let compareData = matches;
+            const selectedRange = parseRange(rangeStr);
+            const overKey = `${over}over`;
+
+            if (over <= 20) {
+                if (over === 20) {
+                    firstInningsDone = true;
+                    targetRuns = runs;
+                    scoreRange = selectedRange || getScoreRange(runs);
+                }
+            } else {
+                if (!firstInningsDone) {
+                    const targetInput = prompt("Please enter the final score after 20 overs (e.g., '142/3'):");
+                    if (!targetInput) {
+                        output.textContent = "Target score required for 2nd innings analysis.";
+                        return;
+                    }
+                    const [targetRunsInput, targetWickets] = parseScore(targetInput);
+                    if (targetRunsInput === null || targetWickets === null) {
+                        output.textContent = "Invalid target score format. Use 'runs/wickets' (e.g., '142/3').";
+                        return;
+                    }
+                    firstInningsDone = true;
+                    targetRuns = targetRunsInput;
+                    scoreRange = selectedRange || getScoreRange(targetRuns);
+                }
+                compareData = filteredMatches;
+            }
+
+            if (selectedRange) {
+                compareData = compareData.filter(match => {
+                    const score = match['20over'];
+                    if (!score) return false;
+                    const [matchRuns] = score.split('/').map(Number);
+                    return matchRuns >= selectedRange[0] && (selectedRange[1] === Infinity ? true : matchRuns <= selectedRange[1]);
+                });
+                scoreRange = selectedRange;
+            } else if (over > 20 && scoreRange) {
+                compareData = compareData.filter(match => {
+                    const score = match['20over'];
+                    if (!score) return false;
+                    const [matchRuns] = score.split('/').map(Number);
+                    return matchRuns >= scoreRange[0] && (selectedRange[1] === Infinity ? true : matchRuns <= selectedRange[1]);
+                });
+            }
+
+            const yearMatches = {};
+            let totalMatches = 0;
+            let runDifference = null;
+
+            if (over <= 20) {
+                compareData.forEach((match, index) => {
+                    const score = match[overKey];
+                    if (!score) return;
+                    const [histRuns, histWickets] = score.split('/').map(Number);
+                    if (isSimilarScore(histRuns, histWickets, runs, wickets, runTolerance, wicketTolerance)) {
+                        const year = match['year'];
+                        if (!yearMatches[year]) yearMatches[year] = [];
+                        yearMatches[year].push({ match, index });
+                        totalMatches++;
+                    }
+                });
+            } else {
+                runDifference = targetRuns - runs;
+                compareData.forEach((match, index) => {
+                    const twentyOverScore = match['20over'];
+                    const currentOverScore = match[overKey];
+                    if (twentyOverScore && currentOverScore) {
+                        const [twentyRuns] = twentyOverScore.split('/').map(Number);
+                        const [currentRuns] = currentOverScore.split('/').map(Number);
+                        if (twentyRuns - currentRuns === runDifference) {
+                            const year = match['year'];
+                            if (!yearMatches[year]) yearMatches[year] = [];
+                            yearMatches[year].push({ match, index });
+                            totalMatches++;
+                        }
+                    }
+                });
+            }
+
+            allYears = [...new Set(Object.keys(yearMatches).map(Number))].sort((a, b) => a - b);
+            allScoreRanges = [];
+            compareData.forEach(match => {
+                const score = match['20over'];
+                if (score) {
+                    const [runs] = score.split('/').map(Number);
+                    const range = getScoreRange(runs);
+                    const rangeStr = range[1] === Infinity ? '200+' : `${range[0]}-${range[1]}`;
+                    if (!allScoreRanges.includes(rangeStr)) allScoreRanges.push(rangeStr);
+                }
+            });
+            allScoreRanges.sort((a, b) => {
+                if (a === '200+') return 1;
+                if (b === '200+') return -1;
+                return parseInt(a.split('-')[0]) - parseInt(b.split('-')[0]);
+            });
+
+            let html = `<p>Analysis for ${runs}/${wickets} after Over ${over} (±${runTolerance} runs, ±${wicketTolerance} wickets)<br>`;
+            if (over > 20 || selectedRange) {
+                html += `20-Over Score Range: ${rangeStr || `${scoreRange[0]}-${scoreRange[1] === Infinity ? '200+' : scoreRange[1]}`}<br>`;
+            }
+            if (over > 20 && runDifference !== null) {
+                html += `Run Difference (20ov - ${over}ov): ${runDifference}<br>`;
+            }
+            html += `Total matches: ${totalMatches}</p>`;
+
+            if (totalMatches === 0) {
+                html += `<p>No matches found within tolerance after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
+            } else {
+                html += '<div class="filter-group">';
+                html += '<button class="year-filter-btn" onclick="openYearFilterModal()">Filter Years</button>';
+                html += '<label for="scoreRangeFilter">Filter Score Range:</label>';
+                html += '<select id="scoreRangeFilter" onchange="applyFilters()"><option value="">All Score Ranges</option>';
+                allScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
+                html += '</select>';
+                html += '<label for="resultFilter">Filter Result:</label>';
+                html += '<select id="resultFilter" onchange="applyFilters()"><option value="">All Results</option><option value="chased">Chased</option><option value="defend">Defend</option></select>';
+                html += '</div>';
+
+                html += '<div class="table-container"><table><thead><tr>';
+                const headers = over <= 20 ? 
+                    ["Year", ...(over < 6 ? ["6ov"] : []), ...(over < 10 ? ["10ov"] : []), ...(over < 15 ? ["15ov"] : []), "20ov", "Result"] :
+                    ["Year", ...(over < 26 ? ["26ov"] : []), ...(over < 30 ? ["30ov"] : []), ...(over < 35 ? ["35ov"] : []), `${over}ov`, "20ov", "40ov", "15ov-6ov", "20ov-6ov", "Result"];
+                
+                headers.forEach(header => html += `<th>${header}</th>`);
+                html += '</tr></thead><tbody id="tableBody">';
+
+                const sortedRows = [];
+                Object.keys(yearMatches).sort().forEach(year => {
+                    yearMatches[year].forEach(({ match }) => {
+                        sortedRows.push({ year, match });
+                    });
+                });
+
+                sortedRows.sort((a, b) => a.year - b.year);
+                lastData = [];
+                selectedYears = allYears.map(String);
+
+                sortedRows.forEach(({ year, match }) => {
+                    const rowData = { Year: year, originalMatch: match };
+                    if (over <= 20) {
+                        if (over < 6) rowData['6ov'] = match['6over'] || "N/A";
+                        if (over < 10) rowData['10ov'] = match['10over'] || "N/A";
+                        if (over < 15) rowData['15ov'] = match['15over'] || "N/A";
+                        rowData['20ov'] = match['20over'] || "N/A";
+                        rowData['Result'] = match['result'] || "unknown";
+                    } else {
+                        if (over < 26) rowData['26ov'] = match['26over'] || "N/A";
+                        if (over < 30) rowData['30ov'] = match['30over'] || "N/A";
+                        if (over < 35) rowData['35ov'] = match['35over'] || "N/A";
+                        rowData[`${over}ov`] = match[overKey] || "N/A";
+                        rowData['20ov'] = match['20over'] || "N/A";
+                        rowData['40ov'] = match['40over'] || "N/A";
+                        rowData['15ov-6ov'] = calculateDifference(match['15over'], match['6over']);
+                        rowData['20ov-6ov'] = calculateDifference(match['20over'], match['6over']);
+                        rowData['Result'] = match['result'] || "unknown";
+                    }
+                    lastData.push(rowData);
+                });
+
+                html += generateTableRows(lastData, over, runs, wickets);
+                html += '</tbody></table></div>';
+
+                const probabilities = calculateProbabilities(lastData);
+                html += `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>`;
+                html += '<button class="back-to-top" onclick="scrollToTop()">Back to Top</button>';
+            }
+
+            output.innerHTML = html;
+            document.getElementById('downloadBtn').disabled = totalMatches === 0;
+            document.getElementById('viewDetailsBtn').disabled = totalMatches === 0;
+            addSortFunctionality();
+        }
+
+        function generateTableRows(data, over, runs, wickets) {
+            let html = '';
+            data.forEach(row => {
+                const overKey = `${over}ov`;
+                const isMatch = over <= 20 && row[overKey] && isSimilarScore(
+                    ...row[overKey].split('/').map(Number), runs, wickets,
+                    parseInt(document.getElementById('runTolerance').value),
+                    parseInt(document.getElementById('wicketTolerance').value)
+                );
+                html += `<tr ${isMatch ? 'class="highlight"' : ''}>`;
+                Object.entries(row).forEach(([key, value]) => {
+                    if (key !== 'originalMatch') html += `<td>${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            return html;
+        }
+
+        function applyFilters() {
+            const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
+            const resultFilter = document.getElementById('resultFilter').value;
+            const [runs, wickets] = parseScore(document.getElementById('scoreInput').value);
+            const over = parseInt(document.getElementById('overSelect').value);
+            const filteredData = lastData.filter(row => {
+                const yearMatch = selectedYears.length === 0 || selectedYears.includes(row.Year.toString());
+                const rangeMatch = !scoreRangeFilter || (() => {
+                    const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
+                    const range = parseRange(scoreRangeFilter);
+                    return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
+                })();
+                const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
+                return yearMatch && rangeMatch && resultMatch;
+            });
+            document.getElementById('tableBody').innerHTML = generateTableRows(filteredData, over, runs, wickets);
+            const probabilities = calculateProbabilities(filteredData);
+            const output = document.getElementById('output');
+            output.innerHTML = output.innerHTML.split('<p>Probability')[0] + 
+                `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>` +
+                '<button class="back-to-top" onclick="scrollToTop()">Back to Top</button>';
+            document.getElementById('viewDetailsBtn').disabled = filteredData.length === 0;
+            addSortFunctionality();
+        }
+
+        function addSortFunctionality() {
+            const table = document.querySelector('#output table');
+            if (!table) return;
+
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.dataset.sort !== 'asc';
+                    
+                    rows.sort((a, b) => {
+                        const aValue = a.cells[index].textContent;
+                        const bValue = b.cells[index].textContent;
+                        
+                        if (header.textContent === 'Year') {
+                            return isAscending ? 
+                                Number(aValue) - Number(bValue) : 
+                                Number(bValue) - Number(aValue);
+                        }
+                        
+                        if (aValue.includes('/') && bValue.includes('/')) {
+                            const [runsA] = aValue.split('/').map(Number);
+                            const [runsB] = bValue.split('/').map(Number);
+                            return isAscending ? runsA - runsB : runsB - runsA;
+                        }
+                        
+                        return isAscending ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+
+                    headers.forEach(h => delete h.dataset.sort);
+                    header.dataset.sort = isAscending ? 'asc' : 'desc';
+                    
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        }
+
+        function resetForm() {
+            matches = [];
+            filteredMatches = [];
+            firstInningsDone = false;
+            scoreRange = null;
+            targetRuns = null;
+            lastData = null;
+            allYears = [];
+            allScoreRanges = [];
+            selectedYears = [];
+            document.getElementById('scoreInput').value = '';
+            document.getElementById('overSelect').value = '';
+            document.getElementById('rangeSelect').value = '';
+            document.getElementById('runTolerance').value = '5';
+            document.getElementById('wicketTolerance').value = '1';
+            document.getElementById('output').textContent = "Loading data from GitHub...";
+            document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('viewDetailsBtn').disabled = true;
+            populateOverSelect();
+            loadGoogleSpreadsheet();
+        }
+
+        function downloadResults() {
+            if (!lastData) return;
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(lastData);
+            XLSX.utils.book_append_sheet(wb, ws, "Results");
+            XLSX.writeFile(wb, `Cricket_Analysis_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        function getScoreRange(runs) {
+            if (runs >= 200) return [200, Infinity];
+            const rangeStart = Math.floor(runs / 10) * 10;
+            return [rangeStart, rangeStart + 9];
+        }
+
+        function viewFullMatchDetails() {
+            const modal = document.getElementById('fullDetailsModal');
+            const outputDiv = document.getElementById('fullDetailsOutput');
+            if (!lastData || lastData.length === 0) {
+                outputDiv.textContent = "No data available.";
+                modal.style.display = 'flex';
+                return;
+            }
+
+            const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
+            const resultFilter = document.getElementById('resultFilter').value;
+            const filteredData = lastData.filter(row => {
+                const yearMatch = selectedYears.length === 0 || selectedYears.includes(row.Year.toString());
+                const rangeMatch = !scoreRangeFilter || (() => {
+                    const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
+                    const range = parseRange(scoreRangeFilter);
+                    return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
+                })();
+                const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
+                return yearMatch && rangeMatch && resultMatch;
+            });
+
+            if (filteredData.length === 0) {
+                outputDiv.textContent = "No matches match the current filters.";
+                modal.style.display = 'flex';
+                return;
+            }
+
+            const allKeys = [...new Set(filteredData.flatMap(row => Object.keys(row.originalMatch)))];
+
+            let html = '<div class="table-container"><table><thead><tr>';
+            allKeys.forEach(key => html += `<th>${key}</th>`);
+            html += '</tr></thead><tbody>';
+
+            filteredData.forEach(row => {
+                html += '<tr>';
+                allKeys.forEach(key => {
+                    const value = row.originalMatch[key] !== undefined ? row.originalMatch[key] : "N/A";
+                    html += `<td>${value}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div>';
+            outputDiv.innerHTML = html;
+            modal.style.display = 'flex';
+
+            addModalSortFunctionality();
+        }
+
+        function addModalSortFunctionality() {
+            const table = document.querySelector('#fullDetailsOutput table');
+            if (!table) return;
+
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.dataset.sort !== 'asc';
+                    
+                    rows.sort((a, b) => {
+                        const aValue = a.cells[index].textContent;
+                        const bValue = b.cells[index].textContent;
+                        
+                        if (header.textContent === 'year') {
+                            return isAscending ? 
+                                Number(aValue) - Number(bValue) : 
+                                Number(bValue) - Number(aValue);
+                        }
+                        
+                        if (aValue.includes('/') && bValue.includes('/')) {
+                            const [runsA] = aValue.split('/').map(Number);
+                            const [runsB] = bValue.split('/').map(Number);
+                            return isAscending ? runsA - runsB : runsB - runsA;
+                        }
+                        
+                        return isAscending ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+
+                    headers.forEach(h => delete h.dataset.sort);
+                    header.dataset.sort = isAscending ? 'asc' : 'desc';
+                    
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        }
+
+        function closeFullDetailsModal() {
+            document.getElementById('fullDetailsModal').style.display = 'none';
+        }
+
+        function scrollToTop() {
+            document.getElementById('output').scrollTop = 0;
+        }
+    </script>
+</body>
+</html>
