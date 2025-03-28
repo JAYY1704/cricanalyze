@@ -288,18 +288,30 @@
         .match-10ov { background: #c8e6c9; } /* Light Green */
         .match-15ov { background: #ffecb3; } /* Light Yellow */
         .match-20ov { background: #f8bbd0; } /* Light Pink */
+        .match-15-6 { background: #d1c4e9; } /* Light Purple */
+        .match-20-6 { background: #b2dfdb; } /* Light Teal */
+        .match-20-10 { background: #f0f4c3; } /* Light Lime */
         body.dark-mode .match-6ov { background: #4a90e2; }
         body.dark-mode .match-10ov { background: #66bb6a; }
         body.dark-mode .match-15ov { background: #ffa726; }
         body.dark-mode .match-20ov { background: #ec407a; }
+        body.dark-mode .match-15-6 { background: #7e57c2; }
+        body.dark-mode .match-20-6 { background: #26a69a; }
+        body.dark-mode .match-20-10 { background: #9ccc65; }
         .match-6ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b3e5fc 50%); }
         .match-10ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #c8e6c9 50%); }
         .match-15ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #ffecb3 50%); }
         .match-20ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #f8bbd0 50%); }
+        .match-15-6-wickets { background: linear-gradient(to right, #ff6f61 50%, #d1c4e9 50%); }
+        .match-20-6-wickets { background: linear-gradient(to right, #ff6f61 50%, #b2dfdb 50%); }
+        .match-20-10-wickets { background: linear-gradient(to right, #ff6f61 50%, #f0f4c3 50%); }
         body.dark-mode .match-6ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #4a90e2 50%); }
         body.dark-mode .match-10ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #66bb6a 50%); }
         body.dark-mode .match-15ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ffa726 50%); }
         body.dark-mode .match-20ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ec407a 50%); }
+        body.dark-mode .match-15-6-wickets { background: linear-gradient(to right, #d32f2f 50%, #7e57c2 50%); }
+        body.dark-mode .match-20-6-wickets { background: linear-gradient(to right, #d32f2f 50%, #26a69a 50%); }
+        body.dark-mode .match-20-10-wickets { background: linear-gradient(to right, #d32f2f 50%, #9ccc65 50%); }
         .filter-group {
             display: flex;
             gap: 10px;
@@ -622,6 +634,13 @@
             };
         }
 
+        function calculateDifferences(runsLater, wicketsLater, runsEarlier, wicketsEarlier) {
+            if (runsLater === null || wicketsLater === null || runsEarlier === null || wicketsEarlier === null) return null;
+            const runsDiff = runsLater - runsEarlier;
+            const wicketsDiff = wicketsLater - wicketsEarlier;
+            return `${runsDiff}/${wicketsDiff}`;
+        }
+
         function processInput() {
             const score6ov = document.getElementById('score6ov').value.trim();
             const score10ov = document.getElementById('score10ov').value.trim();
@@ -646,7 +665,10 @@
                 '6over': [runs6, wickets6],
                 '10over': [runs10, wickets10],
                 '15over': [runs15, wickets15],
-                '20over': [runs20, wickets20]
+                '20over': [runs20, wickets20],
+                '15-6': calculateDifferences(runs15, wickets15, runs6, wickets6),
+                '20-6': calculateDifferences(runs20, wickets20, runs6, wickets6),
+                '20-10': calculateDifferences(runs20, wickets20, runs10, wickets10)
             };
 
             const matchedMatches = [];
@@ -657,18 +679,44 @@
                     '15over': match['15over'] ? match['15over'].split('/').map(Number) : [null, null],
                     '20over': match['20over'] ? match['20over'].split('/').map(Number) : [null, null]
                 };
+                const matchDiffs = {
+                    '15-6': calculateDifferences(matchScores['15over'][0], matchScores['15over'][1], matchScores['6over'][0], matchScores['6over'][1]),
+                    '20-6': calculateDifferences(matchScores['20over'][0], matchScores['20over'][1], matchScores['6over'][0], matchScores['6over'][1]),
+                    '20-10': calculateDifferences(matchScores['20over'][0], matchScores['20over'][1], matchScores['10over'][0], matchScores['10over'][1])
+                };
                 let matchCount = 0;
                 const matchesAt = [];
                 const matchesWicketsAt = [];
 
                 for (const over in inputScores) {
-                    const [inputRuns, inputWickets] = inputScores[over];
-                    const [matchRuns, matchWickets] = matchScores[over];
-                    if (inputRuns !== null && matchRuns === inputRuns) {
-                        matchCount++;
-                        matchesAt.push(over);
-                        if (inputWickets !== null && matchWickets === inputWickets) {
-                            matchesWicketsAt.push(over);
+                    if (over === '6over' || over === '10over' || over === '15over' || over === '20over') {
+                        const [inputRuns, inputWickets] = inputScores[over];
+                        const [matchRuns, matchWickets] = matchScores[over];
+                        if (inputRuns !== null && matchRuns === inputRuns) {
+                            matchCount++;
+                            matchesAt.push(over);
+                            if (inputWickets !== null && matchWickets === inputWickets) {
+                                matchesWicketsAt.push(over);
+                            }
+                        }
+                    } else {
+                        const inputDiff = inputScores[over];
+                        const matchDiff = matchDiffs[over];
+                        if (inputDiff !== null && matchDiff !== null) {
+                            const [inputRunsDiff] = inputDiff.split('/').map(Number);
+                            const [matchRunsDiff] = matchDiff.split('/').map(Number);
+                            if (inputRunsDiff === matchRunsDiff) {
+                                matchCount++;
+                                matchesAt.push(over);
+                                const [inputRunsLater, inputWicketsLater] = over === '15-6' ? inputScores['15over'] : inputScores['20over'];
+                                const [inputRunsEarlier, inputWicketsEarlier] = over === '15-6' ? inputScores['6over'] : (over === '20-6' ? inputScores['6over'] : inputScores['10over']);
+                                const [matchRunsLater, matchWicketsLater] = over === '15-6' ? matchScores['15over'] : matchScores['20over'];
+                                const [matchRunsEarlier, matchWicketsEarlier] = over === '15-6' ? matchScores['6over'] : (over === '20-6' ? matchScores['6over'] : matchScores['10over']);
+                                if (inputRunsLater === matchRunsLater && inputWicketsLater === matchWicketsLater &&
+                                    inputRunsEarlier === matchRunsEarlier && inputWicketsEarlier === matchWicketsEarlier) {
+                                    matchesWicketsAt.push(over);
+                                }
+                            }
                         }
                     }
                 }
@@ -683,6 +731,9 @@
                         '10over': match['10over'] || 'N/A',
                         '15over': match['15over'] || 'N/A',
                         '20over': match['20over'] || 'N/A',
+                        '15-6': matchDiffs['15-6'] !== null ? matchDiffs['15-6'] : 'N/A',
+                        '20-6': matchDiffs['20-6'] !== null ? matchDiffs['20-6'] : 'N/A',
+                        '20-10': matchDiffs['20-10'] !== null ? matchDiffs['20-10'] : 'N/A',
                         'Result': match['result'] || 'unknown'
                     });
                 }
@@ -690,9 +741,9 @@
 
             lastData = matchedMatches;
 
-            let html = `<p>Matches found with at least one score matching: ${matchedMatches.length}</p>`;
+            let html = `<p>Matches found with at least one score or run difference matching: ${matchedMatches.length}</p>`;
             if (matchedMatches.length === 0) {
-                html += `<p>No matches found with the entered scores.</p>`;
+                html += `<p>No matches found with the entered scores or differences.</p>`;
             } else {
                 html += '<button id="viewDetailsBtn" onclick="viewFullMatchDetails()">View Full Match Details</button>';
                 html += '<div class="filter-group">';
@@ -713,7 +764,7 @@
                 html += '</div>';
 
                 html += '<div class="table-container"><table><thead><tr>';
-                const headers = ['Year', '6ov', '10ov', '15ov', '20ov', 'Result'];
+                const headers = ['Year', '6ov', '10ov', '15ov', '20ov', '15-6', '20-6', '20-10', 'Result'];
                 headers.forEach(header => html += `<th>${header}</th>`);
                 html += '</tr></thead><tbody id="tableBody">';
 
@@ -739,6 +790,9 @@
                 html += `<td class="${row.matchesAt.includes('10over') ? (row.matchesWicketsAt.includes('10over') ? 'match-10ov-wickets' : 'match-10ov') : ''}">${row['10over']}</td>`;
                 html += `<td class="${row.matchesAt.includes('15over') ? (row.matchesWicketsAt.includes('15over') ? 'match-15ov-wickets' : 'match-15ov') : ''}">${row['15over']}</td>`;
                 html += `<td class="${row.matchesAt.includes('20over') ? (row.matchesWicketsAt.includes('20over') ? 'match-20ov-wickets' : 'match-20ov') : ''}">${row['20over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('15-6') ? (row.matchesWicketsAt.includes('15-6') ? 'match-15-6-wickets' : 'match-15-6') : ''}">${row['15-6']}</td>`;
+                html += `<td class="${row.matchesAt.includes('20-6') ? (row.matchesWicketsAt.includes('20-6') ? 'match-20-6-wickets' : 'match-20-6') : ''}">${row['20-6']}</td>`;
+                html += `<td class="${row.matchesAt.includes('20-10') ? (row.matchesWicketsAt.includes('20-10') ? 'match-20-10-wickets' : 'match-20-10') : ''}">${row['20-10']}</td>`;
                 html += `<td>${row['Result']}</td>`;
                 html += '</tr>';
             });
@@ -787,10 +841,18 @@
                                 Number(bValue) - Number(aValue);
                         }
                         
-                        if (aValue.includes('/') && bValue.includes('/')) {
-                            const [runsA] = aValue.split('/').map(Number);
-                            const [runsB] = bValue.split('/').map(Number);
+                        if (header.textContent === '6ov' || header.textContent === '10ov' || 
+                            header.textContent === '15ov' || header.textContent === '20ov') {
+                            const [runsA] = aValue.includes('/') ? aValue.split('/').map(Number) : [0];
+                            const [runsB] = bValue.includes('/') ? bValue.split('/').map(Number) : [0];
                             return isAscending ? runsA - runsB : runsB - runsA;
+                        }
+                        
+                        if (header.textContent === '15-6' || header.textContent === '20-6' || 
+                            header.textContent === '20-10') {
+                            const aNum = aValue === 'N/A' ? Infinity : parseInt(aValue.split('/')[0]);
+                            const bNum = bValue === 'N/A' ? Infinity : parseInt(bValue.split('/')[0]);
+                            return isAscending ? aNum - bNum : bNum - aNum;
                         }
                         
                         return isAscending ? 
@@ -956,6 +1018,9 @@
                 '10ov': row['10over'],
                 '15ov': row['15over'],
                 '20ov': row['20over'],
+                '15-6': row['15-6'],
+                '20-6': row['20-6'],
+                '20-10': row['20-10'],
                 Result: row['Result']
             }));
             const ws = XLSX.utils.json_to_sheet(wsData);
