@@ -292,6 +292,14 @@
         body.dark-mode .match-10ov { background: #66bb6a; }
         body.dark-mode .match-15ov { background: #ffa726; }
         body.dark-mode .match-20ov { background: #ec407a; }
+        .match-6ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b3e5fc 50%); }
+        .match-10ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #c8e6c9 50%); }
+        .match-15ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #ffecb3 50%); }
+        .match-20ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #f8bbd0 50%); }
+        body.dark-mode .match-6ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #4a90e2 50%); }
+        body.dark-mode .match-10ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #66bb6a 50%); }
+        body.dark-mode .match-15ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ffa726 50%); }
+        body.dark-mode .match-20ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ec407a 50%); }
         .filter-group {
             display: flex;
             gap: 10px;
@@ -619,10 +627,10 @@
             const score10ov = document.getElementById('score10ov').value.trim();
             const score15ov = document.getElementById('score15ov').value.trim();
             const score20ov = document.getElementById('score20ov').value.trim();
-            const [runs6] = parseScore(score6ov);
-            const [runs10] = parseScore(score10ov);
-            const [runs15] = parseScore(score15ov);
-            const [runs20] = parseScore(score20ov);
+            const [runs6, wickets6] = parseScore(score6ov);
+            const [runs10, wickets10] = parseScore(score10ov);
+            const [runs15, wickets15] = parseScore(score15ov);
+            const [runs20, wickets20] = parseScore(score20ov);
             const output = document.getElementById('output');
 
             if (!score6ov && !score10ov && !score15ov && !score20ov) {
@@ -635,27 +643,33 @@
             }
 
             const inputScores = {
-                '6over': runs6,
-                '10over': runs10,
-                '15over': runs15,
-                '20over': runs20
+                '6over': [runs6, wickets6],
+                '10over': [runs10, wickets10],
+                '15over': [runs15, wickets15],
+                '20over': [runs20, wickets20]
             };
 
             const matchedMatches = [];
             matches.forEach(match => {
                 const matchScores = {
-                    '6over': match['6over'] ? parseInt(match['6over'].split('/')[0]) : null,
-                    '10over': match['10over'] ? parseInt(match['10over'].split('/')[0]) : null,
-                    '15over': match['15over'] ? parseInt(match['15over'].split('/')[0]) : null,
-                    '20over': match['20over'] ? parseInt(match['20over'].split('/')[0]) : null
+                    '6over': match['6over'] ? match['6over'].split('/').map(Number) : [null, null],
+                    '10over': match['10over'] ? match['10over'].split('/').map(Number) : [null, null],
+                    '15over': match['15over'] ? match['15over'].split('/').map(Number) : [null, null],
+                    '20over': match['20over'] ? match['20over'].split('/').map(Number) : [null, null]
                 };
                 let matchCount = 0;
                 const matchesAt = [];
+                const matchesWicketsAt = [];
 
                 for (const over in inputScores) {
-                    if (inputScores[over] !== null && matchScores[over] === inputScores[over]) {
+                    const [inputRuns, inputWickets] = inputScores[over];
+                    const [matchRuns, matchWickets] = matchScores[over];
+                    if (inputRuns !== null && matchRuns === inputRuns) {
                         matchCount++;
                         matchesAt.push(over);
+                        if (inputWickets !== null && matchWickets === inputWickets) {
+                            matchesWicketsAt.push(over);
+                        }
                     }
                 }
 
@@ -664,6 +678,7 @@
                         match,
                         matchCount,
                         matchesAt,
+                        matchesWicketsAt,
                         '6over': match['6over'] || 'N/A',
                         '10over': match['10over'] || 'N/A',
                         '15over': match['15over'] || 'N/A',
@@ -720,10 +735,10 @@
             data.forEach(row => {
                 html += '<tr>';
                 html += `<td>${row.match['year']}</td>`;
-                html += `<td class="${row.matchesAt.includes('6over') ? 'match-6ov' : ''}">${row['6over']}</td>`;
-                html += `<td class="${row.matchesAt.includes('10over') ? 'match-10ov' : ''}">${row['10over']}</td>`;
-                html += `<td class="${row.matchesAt.includes('15over') ? 'match-15ov' : ''}">${row['15over']}</td>`;
-                html += `<td class="${row.matchesAt.includes('20over') ? 'match-20ov' : ''}">${row['20over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('6over') ? (row.matchesWicketsAt.includes('6over') ? 'match-6ov-wickets' : 'match-6ov') : ''}">${row['6over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('10over') ? (row.matchesWicketsAt.includes('10over') ? 'match-10ov-wickets' : 'match-10ov') : ''}">${row['10over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('15over') ? (row.matchesWicketsAt.includes('15over') ? 'match-15ov-wickets' : 'match-15ov') : ''}">${row['15over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('20over') ? (row.matchesWicketsAt.includes('20over') ? 'match-20ov-wickets' : 'match-20ov') : ''}">${row['20over']}</td>`;
                 html += `<td>${row['Result']}</td>`;
                 html += '</tr>';
             });
