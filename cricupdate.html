@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Cricket Chase Analyzer</title>
+    <title>CricketBettingTips</title>
     <style>
-        /* Your existing CSS remains unchanged */
+        /* CSS remains unchanged */
         body {
             font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
@@ -527,12 +527,6 @@
         <label for="scoreInput">Score/Wickets (e.g., 20/1):</label>
         <input type="text" id="scoreInput" placeholder="Enter score/wickets">
         
-        <label for="runTolerance">Run Tolerance (±):</label>
-        <input type="number" id="runTolerance" value="5" min="0" max="20">
-        
-        <label for="wicketTolerance">Wicket Tolerance (±):</label>
-        <input type="number" id="wicketTolerance" value="1" min="0" max="3">
-        
         <label for="overSelect">Select Over:</label>
         <select id="overSelect">
             <option value="">-- Select Over --</option>
@@ -691,8 +685,8 @@
             };
         }
 
-        function isSimilarScore(histRuns, histWickets, targetRuns, targetWickets, runTolerance, wicketTolerance) {
-            return Math.abs(histRuns - targetRuns) <= runTolerance && Math.abs(histWickets - targetWickets) <= wicketTolerance;
+        function isExactScore(histRuns, histWickets, targetRuns, targetWickets) {
+            return histRuns === targetRuns && histWickets === targetWickets;
         }
 
         function openYearFilterModal() {
@@ -721,8 +715,6 @@
         function processInput() {
             const scoreWickets = document.getElementById('scoreInput').value.trim();
             const over = parseInt(document.getElementById('overSelect').value);
-            const runTolerance = parseInt(document.getElementById('runTolerance').value);
-            const wicketTolerance = parseInt(document.getElementById('wicketTolerance').value);
             const rangeStr = document.getElementById('rangeSelect').value;
             const [runs, wickets] = parseScore(scoreWickets);
             const output = document.getElementById('output');
@@ -791,7 +783,7 @@
                     const score = match[overKey];
                     if (!score) return;
                     const [histRuns, histWickets] = score.split('/').map(Number);
-                    if (isSimilarScore(histRuns, histWickets, runs, wickets, runTolerance, wicketTolerance)) {
+                    if (isExactScore(histRuns, histWickets, runs, wickets)) {
                         const year = match['year'];
                         if (!yearMatches[year]) yearMatches[year] = [];
                         yearMatches[year].push({ match, index });
@@ -833,7 +825,7 @@
                 return parseInt(a.split('-')[0]) - parseInt(b.split('-')[0]);
             });
 
-            let html = `<p>Analysis for ${runs}/${wickets} after Over ${over} (±${runTolerance} runs, ±${wicketTolerance} wickets)<br>`;
+            let html = `<p>Analysis for ${runs}/${wickets} after Over ${over}<br>`;
             if (over > 20 || selectedRange) {
                 html += `20-Over Score Range: ${rangeStr || `${scoreRange[0]}-${scoreRange[1] === Infinity ? '200+' : scoreRange[1]}`}<br>`;
             }
@@ -843,7 +835,7 @@
             html += `Total matches: ${totalMatches}</p>`;
 
             if (totalMatches === 0) {
-                html += `<p>No matches found within tolerance after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
+                html += `<p>No matches found with exact score ${runs}/${wickets} after Over ${over}${selectedRange ? ` within ${rangeStr}` : ''}.</p>`;
             } else {
                 html += '<div class="filter-group">';
                 html += '<button class="year-filter-btn" onclick="openYearFilterModal()">Filter Years</button>';
@@ -914,10 +906,8 @@
             let html = '';
             data.forEach(row => {
                 const overKey = `${over}ov`;
-                const isMatch = over <= 20 && row[overKey] && isSimilarScore(
-                    ...row[overKey].split('/').map(Number), runs, wickets,
-                    parseInt(document.getElementById('runTolerance').value),
-                    parseInt(document.getElementById('wicketTolerance').value)
+                const isMatch = over <= 20 && row[overKey] && isExactScore(
+                    ...row[overKey].split('/').map(Number), runs, wickets
                 );
                 html += `<tr ${isMatch ? 'class="highlight"' : ''}>`;
                 Object.entries(row).forEach(([key, value]) => {
@@ -1007,8 +997,6 @@
             document.getElementById('scoreInput').value = '';
             document.getElementById('overSelect').value = '';
             document.getElementById('rangeSelect').value = '';
-            document.getElementById('runTolerance').value = '5';
-            document.getElementById('wicketTolerance').value = '1';
             document.getElementById('output').textContent = "Loading data from GitHub...";
             document.getElementById('downloadBtn').disabled = true;
             document.getElementById('viewDetailsBtn').disabled = true;
