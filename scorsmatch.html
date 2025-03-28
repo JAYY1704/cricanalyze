@@ -703,17 +703,12 @@
                         const inputDiff = inputScores[over];
                         const matchDiff = matchDiffs[over];
                         if (inputDiff !== null && matchDiff !== null) {
-                            const [inputRunsDiff] = inputDiff.split('/').map(Number);
-                            const [matchRunsDiff] = matchDiff.split('/').map(Number);
+                            const [inputRunsDiff, inputWicketsDiff] = inputDiff.split('/').map(Number);
+                            const [matchRunsDiff, matchWicketsDiff] = matchDiff.split('/').map(Number);
                             if (inputRunsDiff === matchRunsDiff) {
                                 matchCount++;
                                 matchesAt.push(over);
-                                const [inputRunsLater, inputWicketsLater] = over === '15-6' ? inputScores['15over'] : inputScores['20over'];
-                                const [inputRunsEarlier, inputWicketsEarlier] = over === '15-6' ? inputScores['6over'] : (over === '20-6' ? inputScores['6over'] : inputScores['10over']);
-                                const [matchRunsLater, matchWicketsLater] = over === '15-6' ? matchScores['15over'] : matchScores['20over'];
-                                const [matchRunsEarlier, matchWicketsEarlier] = over === '15-6' ? matchScores['6over'] : (over === '20-6' ? matchScores['6over'] : matchScores['10over']);
-                                if (inputRunsLater === matchRunsLater && inputWicketsLater === matchWicketsLater &&
-                                    inputRunsEarlier === matchRunsEarlier && inputWicketsEarlier === matchWicketsEarlier) {
+                                if (inputWicketsDiff === matchWicketsDiff) {
                                     matchesWicketsAt.push(over);
                                 }
                             }
