@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Cricket Match Analyzer</title>
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.classic-mode {
+            background: linear-gradient(135deg, #1e3c72, #2a5298), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/><path d="M20 80 Q50 50 80 80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/></svg>') repeat;
+            color: #fff;
+        }
+        body.dark-mode {
+            background: #2b2b2b;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            box-sizing: border-box;
+            position: relative;
+        }
+        body.classic-mode .container {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+        body.dark-mode .container {
+            background: #333333;
+            color: #e0e0e0;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .theme-toggle select {
+            padding: 6px;
+            font-size: 0.9em;
+            border-radius: 6px;
+            border: 2px solid;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        body.classic-mode .theme-toggle select {
+            border-color: #ddd;
+        }
+        body.dark-mode .theme-toggle select {
+            border-color: #4a4a4a;
+            background: #404040;
+            color: #e0e0e0;
+        }
+        .theme-toggle select:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin: 0 0 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        body.classic-mode h1 {
+            color: #1e3c72;
+        }
+        body.dark-mode h1 {
+            color: #cccccc;
+        }
+        label {
+            display: block;
+            margin: 5px 0 2px;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        body.classic-mode label {
+            color: #2a5298;
+        }
+        body.dark-mode label {
+            color: #cccccc;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 0.95em;
+            border-radius: 6px;
+            border: 2px solid;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+        body.classic-mode input,
+        body.classic-mode select {
+            border-color: #ddd;
+            background: #f9f9f9;
+        }
+        body.dark-mode input,
+        body.dark-mode select {
+            border-color: #4a4a4a;
+            background: #404040;
+            color: #e0e0e0;
+        }
+        input:focus, select:focus {
+            box-shadow: 0 0 5px rgba(42, 82, 152, 0.5);
+            outline: none;
+            border-color: #2a5298;
+        }
+        body.dark-mode input:focus,
+        body.dark-mode select:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        select {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#2a5298"/></svg>') no-repeat right 10px center;
+            background-size: 12px;
+        }
+        body.dark-mode select {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#ffffff"/></svg>') no-repeat right 10px center;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1em;
+            min-width: 100px;
+            transition: transform 0.2s, background 0.3s;
+        }
+        body.classic-mode button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        body.dark-mode button {
+            background: #ffffff;
+            color: #2b2b2b;
+        }
+        body.classic-mode button:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+        }
+        body.dark-mode button:hover {
+            background: #e0e0e0;
+        }
+        body.classic-mode #resetBtn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        body.dark-mode #resetBtn {
+            background: #ff5555;
+            color: #2b2b2b;
+        }
+        body.classic-mode #resetBtn:hover {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+        }
+        body.dark-mode #resetBtn:hover {
+            background: #e64444;
+        }
+        body.classic-mode #downloadBtn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        body.dark-mode #downloadBtn {
+            background: #55aaff;
+            color: #2b2b2b;
+        }
+        body.classic-mode #downloadBtn:hover {
+            background: linear-gradient(135deg, #1976D2, #0d47a1);
+        }
+        body.dark-mode #downloadBtn:hover {
+            background: #4499ee;
+        }
+        #downloadBtn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+            color: #b0b0b0;
+        }
+        #output {
+            padding: 15px;
+            border: 2px solid;
+            border-radius: 6px;
+            min-height: 200px;
+            overflow-y: auto;
+            overflow-x: auto;
+            flex-grow: 1;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        body.classic-mode #output {
+            background: #fff;
+            border-color: #ddd;
+        }
+        body.dark-mode #output {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        body.classic-mode th,
+        body.classic-mode td {
+            border-color: #ddd;
+        }
+        body.dark-mode th,
+        body.dark-mode td {
+            border-color: #4a4a4a;
+        }
+        th {
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: inherit;
+        }
+        body.classic-mode th {
+            background: #2a5298;
+            color: white;
+        }
+        body.dark-mode th {
+            background: #404040;
+            color: #e0e0e0;
+        }
+        body.classic-mode th:hover {
+            background: #1e3c72;
+        }
+        body.dark-mode th:hover {
+            background: #4a4a4a;
+        }
+        body.classic-mode tr:nth-child(even) {
+            background: #f5f6fa;
+        }
+        body.dark-mode tr:nth-child(even) {
+            background: #3a3a3a;
+        }
+        body.classic-mode tr:hover {
+            background: #e8eaf6;
+        }
+        body.dark-mode tr:hover {
+            background: #4a4a4a;
+        }
+        .match-6ov { background: #b3e5fc; } /* Light Blue */
+        .match-10ov { background: #c8e6c9; } /* Light Green */
+        .match-15ov { background: #ffecb3; } /* Light Yellow */
+        .match-20ov { background: #f8bbd0; } /* Light Pink */
+        body.dark-mode .match-6ov { background: #4a90e2; }
+        body.dark-mode .match-10ov { background: #66bb6a; }
+        body.dark-mode .match-15ov { background: #ffa726; }
+        body.dark-mode .match-20ov { background: #ec407a; }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px;
+            border-radius: 6px;
+            flex-direction: column;
+        }
+        body.classic-mode .filter-group {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        body.dark-mode .filter-group {
+            background: #333333;
+        }
+        .filter-group select {
+            flex: 1;
+            min-width: 100%;
+        }
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            h1 { font-size: 1.4em; }
+            label { font-size: 0.9em; }
+            input, select, button { padding: 8px; font-size: 0.85em; }
+            .button-group, .filter-group { gap: 8px; }
+            button { padding: 8px; font-size: 0.9em; min-width: 100%; }
+            #output { min-height: 150px; padding: 10px; }
+            th, td { font-size: 0.8em; padding: 6px; }
+            .theme-toggle { top: 5px; right: 5px; }
+            .theme-toggle select { padding: 5px; font-size: 0.85em; }
+            .table-container { max-height: 300px; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="classic-mode">
+    <div class="container">
+        <div class="theme-toggle">
+            <select id="themeSelect" onchange="toggleTheme()">
+                <option value="classic-mode">Classic Mode</option>
+                <option value="dark-mode">Dark Mode</option>
+            </select>
+        </div>
+        <h1>Cricket Match Analyzer</h1>
+        
+        <label for="score6ov">6 Overs Score/Wickets (e.g., 20/1):</label>
+        <input type="text" id="score6ov" placeholder="Enter 6 overs score/wickets">
+        
+        <label for="score10ov">10 Overs Score/Wickets (e.g., 50/2):</label>
+        <input type="text" id="score10ov" placeholder="Enter 10 overs score/wickets">
+        
+        <label for="score15ov">15 Overs Score/Wickets (e.g., 100/3):</label>
+        <input type="text" id="score15ov" placeholder="Enter 15 overs score/wickets">
+        
+        <label for="score20ov">20 Overs Score/Wickets (e.g., 150/4):</label>
+        <input type="text" id="score20ov" placeholder="Enter 20 overs score/wickets">
+        
+        <div class="button-group">
+            <button onclick="processInput()">Submit</button>
+            <button id="resetBtn" onclick="resetForm()">Reset</button>
+            <button id="downloadBtn" onclick="downloadResults()" disabled>Download Results</button>
+        </div>
+        
+        <div id="output">Loading data from GitHub...</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" 
+            onerror="alert('Failed to load SheetJS. Check internet or use a local copy.');"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js" 
+            onerror="alert('Failed to load PapaParse. Check internet or use a local copy.');"></script>
+    <script>
+        let matches = [];
+        let lastData = [];
+
+        function toggleTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('theme') || 'classic-mode';
+            document.getElementById('themeSelect').value = savedTheme;
+            document.body.className = savedTheme;
+            loadGoogleSpreadsheet();
+        };
+
+        function loadGoogleSpreadsheet() {
+            const url = 'https://raw.githubusercontent.com/jayy1704/cricanalyze/main/cricket_data.csv';
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    Papa.parse(data, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            matches = results.data;
+                            document.getElementById('output').textContent = `Data loaded successfully! ${matches.length} matches found.`;
+                            console.log("Loaded matches:", matches);
+                        },
+                        error: function(err) {
+                            throw new Error('PapaParse error: ' + err);
+                        }
+                    });
+                })
+                .catch(err => {
+                    alert('Error loading data: ' + err.message);
+                    document.getElementById('output').textContent = "Error loading data: " + err.message;
+                });
+        }
+
+        function parseScore(scoreWickets) {
+            if (!scoreWickets) return [null, null];
+            const parts = scoreWickets.split('/');
+            if (parts.length !== 2) return [null, null];
+            const runs = parseInt(parts[0]);
+            const wickets = parseInt(parts[1]);
+            if (isNaN(runs) || isNaN(wickets) || wickets < 0 || wickets > 10) return [null, null];
+            return [runs, wickets];
+        }
+
+        function processInput() {
+            const score6ov = document.getElementById('score6ov').value.trim();
+            const score10ov = document.getElementById('score10ov').value.trim();
+            const score15ov = document.getElementById('score15ov').value.trim();
+            const score20ov = document.getElementById('score20ov').value.trim();
+            const [runs6, wickets6] = parseScore(score6ov);
+            const [runs10, wickets10] = parseScore(score10ov);
+            const [runs15, wickets15] = parseScore(score15ov);
+            const [runs20, wickets20] = parseScore(score20ov);
+            const output = document.getElementById('output');
+
+            if (!score6ov && !score10ov && !score15ov && !score20ov) {
+                output.textContent = "Please enter at least one valid score/wickets (e.g., '20/1').";
+                return;
+            }
+            if (matches.length === 0) {
+                output.textContent = "Please wait for the data to load from GitHub.";
+                return;
+            }
+
+            const inputScores = {
+                '6over': runs6,
+                '10over': runs10,
+                '15over': runs15,
+                '20over': runs20
+            };
+
+            const matchedMatches = [];
+            matches.forEach(match => {
+                const matchScores = {
+                    '6over': match['6over'] ? parseInt(match['6over'].split('/')[0]) : null,
+                    '10over': match['10over'] ? parseInt(match['10over'].split('/')[0]) : null,
+                    '15over': match['15over'] ? parseInt(match['15over'].split('/')[0]) : null,
+                    '20over': match['20over'] ? parseInt(match['20over'].split('/')[0]) : null
+                };
+                let matchCount = 0;
+                const matchesAt = [];
+
+                for (const over in inputScores) {
+                    if (inputScores[over] !== null && matchScores[over] === inputScores[over]) {
+                        matchCount++;
+                        matchesAt.push(over);
+                    }
+                }
+
+                if (matchCount > 0) {
+                    matchedMatches.push({
+                        match,
+                        matchCount,
+                        matchesAt,
+                        '6over': match['6over'] || 'N/A',
+                        '10over': match['10over'] || 'N/A',
+                        '15over': match['15over'] || 'N/A',
+                        '20over': match['20over'] || 'N/A',
+                        'Result': match['result'] || 'unknown'
+                    });
+                }
+            });
+
+            lastData = matchedMatches;
+
+            let html = `<p>Matches found with at least one score matching: ${matchedMatches.length}</p>`;
+            if (matchedMatches.length === 0) {
+                html += `<p>No matches found with the entered scores.</p>`;
+            } else {
+                html += '<div class="filter-group">';
+                html += '<label for="matchFilter">Filter by Number of Matches:</label>';
+                html += '<select id="matchFilter" onchange="applyFilter()">';
+                html += '<option value="">All Matches</option>';
+                html += '<option value="1">1 Field Match</option>';
+                html += '<option value="2">2 Fields Match</option>';
+                html += '<option value="3">3 Fields Match</option>';
+                html += '<option value="4">All Fields Match</option>';
+                html += '</select>';
+                html += '</div>';
+
+                html += '<div class="table-container"><table><thead><tr>';
+                const headers = ['Year', '6ov', '10ov', '15ov', '20ov', 'Result'];
+                headers.forEach(header => html += `<th>${header}</th>`);
+                html += '</tr></thead><tbody id="tableBody">';
+
+                html += generateTableRows(matchedMatches);
+                html += '</tbody></table></div>';
+            }
+
+            output.innerHTML = html;
+            document.getElementById('downloadBtn').disabled = matchedMatches.length === 0;
+            addSortFunctionality();
+        }
+
+        function generateTableRows(data) {
+            let html = '';
+            data.forEach(row => {
+                html += '<tr>';
+                html += `<td>${row.match['year']}</td>`;
+                html += `<td class="${row.matchesAt.includes('6over') ? 'match-6ov' : ''}">${row['6over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('10over') ? 'match-10ov' : ''}">${row['10over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('15over') ? 'match-15ov' : ''}">${row['15over']}</td>`;
+                html += `<td class="${row.matchesAt.includes('20over') ? 'match-20ov' : ''}">${row['20over']}</td>`;
+                html += `<td>${row['Result']}</td>`;
+                html += '</tr>';
+            });
+            return html;
+        }
+
+        function applyFilter() {
+            const matchFilter = document.getElementById('matchFilter').value;
+            const filteredData = matchFilter ? 
+                lastData.filter(row => row.matchCount === parseInt(matchFilter)) : 
+                lastData;
+            document.getElementById('tableBody').innerHTML = generateTableRows(filteredData);
+            addSortFunctionality();
+        }
+
+        function addSortFunctionality() {
+            const table = document.querySelector('#output table');
+            if (!table) return;
+
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.dataset.sort !== 'asc';
+                    
+                    rows.sort((a, b) => {
+                        const aValue = a.cells[index].textContent;
+                        const bValue = b.cells[index].textContent;
+                        
+                        if (header.textContent === 'Year') {
+                            return isAscending ? 
+                                Number(aValue) - Number(bValue) : 
+                                Number(bValue) - Number(aValue);
+                        }
+                        
+                        if (aValue.includes('/') && bValue.includes('/')) {
+                            const [runsA] = aValue.split('/').map(Number);
+                            const [runsB] = bValue.split('/').map(Number);
+                            return isAscending ? runsA - runsB : runsB - runsA;
+                        }
+                        
+                        return isAscending ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+
+                    headers.forEach(h => delete h.dataset.sort);
+                    header.dataset.sort = isAscending ? 'asc' : 'desc';
+                    
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('score6ov').value = '';
+            document.getElementById('score10ov').value = '';
+            document.getElementById('score15ov').value = '';
+            document.getElementById('score20ov').value = '';
+            document.getElementById('output').textContent = "Loading data from GitHub...";
+            document.getElementById('downloadBtn').disabled = true;
+            matches = [];
+            lastData = [];
+            loadGoogleSpreadsheet();
+        }
+
+        function downloadResults() {
+            if (!lastData) return;
+
+            const wb = XLSX.utils.book_new();
+            const wsData = lastData.map(row => ({
+                Year: row.match['year'],
+                '6ov': row['6over'],
+                '10ov': row['10over'],
+                '15ov': row['15over'],
+                '20ov': row['20over'],
+                Result: row['Result']
+            }));
+            const ws = XLSX.utils.json_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, "Results");
+            XLSX.writeFile(wb, `Cricket_Match_Analysis_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+    </script>
+</body>
+</html>
