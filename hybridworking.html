@@ -36,53 +36,41 @@
             flex-grow: 1;
             box-sizing: border-box;
             position: relative;
-        }
-        body.classic-mode .container {
             background: rgba(255, 255, 255, 0.95);
-            color: #333;
         }
         body.dark-mode .container {
             background: #333333;
-            color: #e0e0e0;
         }
         .theme-toggle {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
         }
         .theme-toggle select {
-            padding: 6px;
-            font-size: 0.9em;
+            padding: 8px;
+            font-size: 1em;
             border-radius: 6px;
-            border: 2px solid;
+            border: 2px solid #ddd;
             background: #f9f9f9;
             cursor: pointer;
-            transition: border-color 0.3s, background 0.3s;
-        }
-        body.classic-mode .theme-toggle select {
-            border-color: #ddd;
+            transition: all 0.3s ease;
         }
         body.dark-mode .theme-toggle select {
             border-color: #4a4a4a;
             background: #404040;
             color: #e0e0e0;
         }
-        .theme-toggle select:focus {
-            outline: none;
-        }
-        body.classic-mode .theme-toggle select:focus {
+        .theme-toggle select:hover {
             border-color: #2a5298;
         }
-        body.dark-mode .theme-toggle select:focus {
+        body.dark-mode .theme-toggle select:hover {
             border-color: #ffffff;
         }
         h1 {
             text-align: center;
-            font-size: 1.8em;
-            margin: 0 0 10px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        body.classic-mode h1 {
+            font-size: 2em;
+            margin: 0 0 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
             color: #1e3c72;
         }
         body.dark-mode h1 {
@@ -90,11 +78,9 @@
         }
         label {
             display: block;
-            margin: 5px 0 2px;
+            margin: 8px 0 4px;
             font-weight: 600;
-            font-size: 1em;
-        }
-        body.classic-mode label {
+            font-size: 1.1em;
             color: #2a5298;
         }
         body.dark-mode label {
@@ -102,18 +88,13 @@
         }
         input, select, button {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
             box-sizing: border-box;
-            font-size: 0.95em;
+            font-size: 1em;
             border-radius: 6px;
-            border: 2px solid;
-            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
-        }
-        body.classic-mode input,
-        body.classic-mode select {
-            border-color: #ddd;
-            background: #f9f9f9;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
         }
         body.dark-mode input,
         body.dark-mode select {
@@ -122,40 +103,36 @@
             color: #e0e0e0;
         }
         input:focus, select:focus {
-            box-shadow: 0 0 5px rgba(42, 82, 152, 0.5);
-            outline: none;
-        }
-        body.classic-mode input:focus,
-        body.classic-mode select:focus {
             border-color: #2a5298;
+            box-shadow: 0 0 8px rgba(42, 82, 152, 0.5);
+            outline: none;
         }
         body.dark-mode input:focus,
         body.dark-mode select:focus {
             border-color: #ffffff;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
         select {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#2a5298"/></svg>') no-repeat right 10px center;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#2a5298"/></svg>') no-repeat right 12px center;
             background-size: 12px;
         }
         body.dark-mode select {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#ffffff"/></svg>') no-repeat right 10px center;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#ffffff"/></svg>') no-repeat right 12px center;
         }
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             flex-direction: column;
         }
         button {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
             cursor: pointer;
             border-radius: 6px;
-            font-size: 1em;
-            min-width: 100px;
-            transition: transform 0.2s, background 0.3s;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
         }
         body.classic-mode button {
             background: linear-gradient(135deg, #4CAF50, #45a049);
@@ -167,9 +144,11 @@
         }
         body.classic-mode button:hover {
             background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
         }
         body.dark-mode button:hover {
             background: #e0e0e0;
+            transform: translateY(-2px);
         }
         /* Chase Analyzer Buttons */
         body.classic-mode #viewDetailsBtn {
@@ -189,6 +168,7 @@
             background: #666666;
             cursor: not-allowed;
             color: #b0b0b0;
+            transform: none;
         }
         /* Match Analyzer Buttons */
         body.classic-mode #matchSubmitBtn {
@@ -234,21 +214,18 @@
             background: #666666;
             cursor: not-allowed;
             color: #b0b0b0;
+            transform: none;
         }
         #output, #match-output {
             padding: 15px;
-            border: 2px solid;
+            border: 2px solid #ddd;
             border-radius: 6px;
             min-height: 200px;
             overflow-y: auto;
             overflow-x: auto;
             flex-grow: 1;
             box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        body.classic-mode #output,
-        body.classic-mode #match-output {
             background: #fff;
-            border-color: #ddd;
         }
         body.dark-mode #output,
         body.dark-mode #match-output {
@@ -258,23 +235,20 @@
         .table-container {
             width: 100%;
             overflow-x: auto;
-            max-height: 350px;
+            max-height: 400px;
             overflow-y: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9em;
+            font-size: 0.95em;
         }
         th, td {
-            border: 1px solid;
-            padding: 8px;
+            border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
             white-space: nowrap;
-        }
-        body.classic-mode th,
-        body.classic-mode td {
-            border-color: #ddd;
+            transition: background 0.3s;
         }
         body.dark-mode th,
         body.dark-mode td {
@@ -285,14 +259,18 @@
             position: sticky;
             top: 0;
             z-index: 1;
-        }
-        body.classic-mode th {
             background: #2a5298;
             color: white;
         }
         body.dark-mode th {
             background: #404040;
             color: #e0e0e0;
+        }
+        tr:hover {
+            background: #e9ecef;
+        }
+        body.dark-mode tr:hover {
+            background: #444444;
         }
         body.classic-mode tr:nth-child(even) {
             background: #f5f6fa;
@@ -301,12 +279,14 @@
             background: #3a3a3a;
         }
         .highlight-match {
-            background: #fff3cd !important; /* Yellow highlight for matches */
-            color: #333 !important; /* Dark text for readability */
+            background: #ffd700 !important;
+            color: #333 !important;
+            border: 1px solid #e6c200 !important;
         }
         body.dark-mode .highlight-match {
-            background: #ffeeba !important; /* Slightly darker yellow for dark mode */
+            background: #ffcc00 !important;
             color: #2b2b2b !important;
+            border: 1px solid #e6b800 !important;
         }
         .match-6ov { background: #b3e5fc; }
         .match-10ov { background: #c8e6c9; }
@@ -350,13 +330,10 @@
         body.dark-mode .match-20-15-wickets { background: linear-gradient(to right, #d32f2f 50%, #ff8f00 50%); }
         .filter-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
-            flex-direction: column;
-        }
-        body.classic-mode .filter-group {
             background: rgba(255, 255, 255, 0.8);
         }
         body.dark-mode .filter-group {
@@ -369,22 +346,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
         .modal-content {
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
             max-width: 95%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-        }
-        body.classic-mode .modal-content {
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
             background: #fff;
-            color: #333;
         }
         body.dark-mode .modal-content {
             background: #333333;
@@ -392,9 +366,7 @@
         }
         .modal-content h2 {
             margin-top: 0;
-            font-size: 1.4em;
-        }
-        body.classic-mode .modal-content h2 {
+            font-size: 1.5em;
             color: #1e3c72;
         }
         body.dark-mode .modal-content h2 {
@@ -403,36 +375,37 @@
         .year-checkbox-label {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 8px 0;
+            gap: 10px;
+            margin: 10px 0;
             font-size: 1em;
             cursor: pointer;
         }
         .modal-buttons {
-            margin-top: 15px;
+            margin-top: 20px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: flex-end;
         }
         .back-to-top {
             position: sticky;
-            bottom: 10px;
-            right: 10px;
+            bottom: 15px;
+            right: 15px;
             float: right;
-            padding: 8px;
-            font-size: 0.9em;
+            padding: 10px;
+            font-size: 1em;
             border-radius: 6px;
             cursor: pointer;
             background: #2a5298;
             color: #fff;
             border: none;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
         body.dark-mode .back-to-top {
             background: #555555;
         }
         .back-to-top:hover {
             background: #1e3c72;
+            transform: translateY(-2px);
         }
         body.dark-mode .back-to-top:hover {
             background: #666666;
@@ -440,13 +413,14 @@
         @media (max-width: 600px) {
             body { padding: 5px; }
             .container { padding: 10px; }
-            h1 { font-size: 1.4em; }
-            label { font-size: 0.9em; }
-            input, select, button { padding: 8px; font-size: 0.85em; }
-            .button-group { gap: 8px; }
+            h1 { font-size: 1.6em; }
+            label { font-size: 1em; }
+            input, select, button { padding: 10px; font-size: 0.9em; }
+            .button-group { gap: 10px; }
             #output, #match-output { min-height: 150px; padding: 10px; }
-            th, td { font-size: 0.8em; padding: 6px; }
-            .modal-content { padding: 10px; max-width: 98%; }
+            th, td { font-size: 0.85em; padding: 8px; }
+            .modal-content { padding: 15px; max-width: 98%; }
+            .back-to-top { padding: 8px; font-size: 0.9em; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -667,11 +641,16 @@
         }
 
         function isMatchInMatchAnalyzer(chaseMatch) {
-            if (!matchLastData || matchLastData.length === 0) return false;
+            if (!Array.isArray(matchLastData) || matchLastData.length === 0) return false;
+            const chaseDetails = chaseMatch.originalMatch;
+            const compareKeys = ['year', '6over', '10over', '15over', '20over', 'result'];
             return matchLastData.some(matchRow => {
-                const chaseDetails = chaseMatch.originalMatch;
                 const matchDetails = matchRow.match;
-                return Object.keys(chaseDetails).every(key => chaseDetails[key] === matchDetails[key]);
+                return compareKeys.every(key => {
+                    const chaseVal = chaseDetails[key] ? chaseDetails[key].toString().trim() : null;
+                    const matchVal = matchDetails[key] ? matchDetails[key].toString().trim() : null;
+                    return chaseVal === matchVal || (!chaseVal && !matchVal);
+                });
             });
         }
 
@@ -834,7 +813,7 @@
                     chaseLastData.push(rowData);
                 });
 
-                html += generateChaseTableRows(chaseLastData, over, runs, wickets);
+                html += generateChaseTableRows(chaseLastData, over);
                 html += '</tbody></table></div>';
 
                 const probabilities = calculateChaseProbabilities(chaseLastData);
@@ -847,13 +826,12 @@
             addChaseSortFunctionality();
         }
 
-        function generateChaseTableRows(data, over, runs, wickets) {
+        function generateChaseTableRows(data, over) {
             let html = '';
             data.forEach(row => {
-                const overKey = `${over}ov`;
-                const isMatch = over <= 20 && row[overKey] && row[overKey].split('/').map(Number)[0] === runs && row[overKey].split('/').map(Number)[1] === wickets;
                 const isHighlighted = isMatchInMatchAnalyzer(row);
-                html += `<tr ${isMatch ? 'class="highlight"' : ''} ${isHighlighted ? 'class="highlight-match"' : ''}>`;
+                const classList = [isHighlighted ? 'highlight-match' : ''];
+                html += `<tr class="${classList.join(' ').trim()}">`;
                 Object.entries(row).forEach(([key, value]) => {
                     if (key !== 'originalMatch') html += `<td>${value}</td>`;
                 });
@@ -877,7 +855,7 @@
                 const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
                 return yearMatch && rangeMatch && resultMatch;
             });
-            document.getElementById('tableBody').innerHTML = generateChaseTableRows(filteredData, over, runs, wickets);
+            document.getElementById('tableBody').innerHTML = generateChaseTableRows(filteredData, over);
             const probabilities = calculateChaseProbabilities(filteredData);
             document.getElementById('output').innerHTML = document.getElementById('output').innerHTML.split('<p>Probability')[0] + 
                 `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>` +
@@ -1162,7 +1140,8 @@
                 }
             });
 
-            matchLastData = matchedMatches; // Update matchLastData with initial results
+            matchLastData = matchedMatches;
+            localStorage.setItem('matchLastData', JSON.stringify(matchLastData));
             displayMatchResults(matchLastData);
         }
 
@@ -1235,7 +1214,8 @@
                 })();
                 return yearMatch && matchCountMatch && rangeMatch;
             });
-            matchLastData = filteredData; // Update matchLastData with filtered results
+            matchLastData = filteredData;
+            localStorage.setItem('matchLastData', JSON.stringify(matchLastData));
             document.getElementById('matchTableBody').innerHTML = generateMatchTableRows(filteredData);
             const probabilities = calculateMatchProbabilities(filteredData);
             document.getElementById('matchProbability').innerHTML = `Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%`;
