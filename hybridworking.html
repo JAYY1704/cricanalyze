@@ -9,7 +9,7 @@
         body {
             font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
-            padding: 10px;
+            padding: 15px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -17,64 +17,78 @@
         }
         body.classic-mode {
             background: linear-gradient(135deg, #1e3c72, #2a5298), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/><path d="M20 80 Q50 50 80 80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/></svg>') repeat;
-            color: #fff;
+            color: #1a1a1a;
         }
         body.dark-mode {
-            background: #2b2b2b;
-            color: #e0e0e0;
+            background: #1f1f1f;
+            color: #f0f0f0;
         }
         .container {
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             flex-grow: 1;
             box-sizing: border-box;
             position: relative;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        body.classic-mode .container {
             background: rgba(255, 255, 255, 0.95);
+            color: #1a1a1a;
         }
         body.dark-mode .container {
-            background: #333333;
+            background: #2a2a2a;
+            color: #f0f0f0;
         }
         .theme-toggle {
             position: absolute;
             top: 15px;
             right: 15px;
+            z-index: 10;
         }
         .theme-toggle select {
             padding: 8px;
             font-size: 1em;
-            border-radius: 6px;
-            border: 2px solid #ddd;
-            background: #f9f9f9;
+            border-radius: 8px;
+            border: 2px solid;
+            background: #ffffff;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        body.classic-mode .theme-toggle select {
+            border-color: #bbb;
         }
         body.dark-mode .theme-toggle select {
-            border-color: #4a4a4a;
-            background: #404040;
-            color: #e0e0e0;
+            border-color: #555;
+            background: #3a3a3a;
+            color: #f0f0f0;
         }
-        .theme-toggle select:hover {
+        .theme-toggle select:focus {
+            outline: none;
             border-color: #2a5298;
         }
-        body.dark-mode .theme-toggle select:hover {
+        body.dark-mode .theme-toggle select:focus {
             border-color: #ffffff;
         }
         h1 {
             text-align: center;
             font-size: 2em;
             margin: 0 0 15px;
+            padding-top: 10px;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
             color: #1e3c72;
         }
+        body.classic-mode h1 {
+            color: #1e3c72;
+        }
         body.dark-mode h1 {
-            color: #cccccc;
+            color: #ffffff;
         }
         label {
             display: block;
@@ -83,8 +97,11 @@
             font-size: 1.1em;
             color: #2a5298;
         }
+        body.classic-mode label {
+            color: #2a5298;
+        }
         body.dark-mode label {
-            color: #cccccc;
+            color: #e0e0e0;
         }
         input, select, button {
             width: 100%;
@@ -92,25 +109,34 @@
             margin-bottom: 12px;
             box-sizing: border-box;
             font-size: 1em;
-            border-radius: 6px;
-            border: 2px solid #ddd;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            border: 2px solid;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+        body.classic-mode input,
+        body.classic-mode select {
+            border-color: #ccc;
+            background: #fafafa;
+            color: #1a1a1a;
         }
         body.dark-mode input,
         body.dark-mode select {
-            border-color: #4a4a4a;
-            background: #404040;
-            color: #e0e0e0;
+            border-color: #555;
+            background: #3a3a3a;
+            color: #f0f0f0;
         }
         input:focus, select:focus {
-            border-color: #2a5298;
-            box-shadow: 0 0 8px rgba(42, 82, 152, 0.5);
+            box-shadow: 0 0 6px rgba(42, 82, 152, 0.6);
             outline: none;
+        }
+        body.classic-mode input:focus,
+        body.classic-mode select:focus {
+            border-color: #2a5298;
         }
         body.dark-mode input:focus,
         body.dark-mode select:focus {
             border-color: #ffffff;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
         }
         select {
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><polygon points="0,0 12,0 6,6" fill="#2a5298"/></svg>') no-repeat right 12px center;
@@ -130,33 +156,31 @@
             padding: 12px;
             border: none;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1.1em;
-            transition: all 0.3s ease;
+            min-width: 120px;
+            transition: transform 0.2s, background 0.3s;
         }
         body.classic-mode button {
             background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
+            color: #ffffff;
         }
         body.dark-mode button {
-            background: #ffffff;
-            color: #2b2b2b;
+            background: #e0e0e0;
+            color: #1f1f1f;
         }
         body.classic-mode button:hover {
             background: linear-gradient(135deg, #45a049, #3d8b40);
-            transform: translateY(-2px);
         }
         body.dark-mode button:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
+            background: #d0d0d0;
         }
-        /* Chase Analyzer Buttons */
         body.classic-mode #viewDetailsBtn {
             background: linear-gradient(135deg, #FF9800, #F57C00);
         }
         body.dark-mode #viewDetailsBtn {
             background: #ffdd55;
-            color: #2b2b2b;
+            color: #1f1f1f;
         }
         body.classic-mode #viewDetailsBtn:hover {
             background: linear-gradient(135deg, #F57C00, #e65100);
@@ -165,18 +189,16 @@
             background: #eecc44;
         }
         #viewDetailsBtn:disabled {
-            background: #666666;
+            background: #888888;
             cursor: not-allowed;
-            color: #b0b0b0;
-            transform: none;
+            color: #cccccc;
         }
-        /* Match Analyzer Buttons */
         body.classic-mode #matchSubmitBtn {
             background: linear-gradient(135deg, #2196F3, #1976D2);
         }
         body.dark-mode #matchSubmitBtn {
             background: #55aaff;
-            color: #2b2b2b;
+            color: #1f1f1f;
         }
         body.classic-mode #matchSubmitBtn:hover {
             background: linear-gradient(135deg, #1976D2, #0d47a1);
@@ -189,7 +211,7 @@
         }
         body.dark-mode #matchViewDetailsBtn {
             background: #ffdd55;
-            color: #2b2b2b;
+            color: #1f1f1f;
         }
         body.classic-mode #matchViewDetailsBtn:hover {
             background: linear-gradient(135deg, #F57C00, #e65100);
@@ -202,7 +224,7 @@
         }
         body.dark-mode #matchBackBtn {
             background: #bb55ff;
-            color: #2b2b2b;
+            color: #1f1f1f;
         }
         body.classic-mode #matchBackBtn:hover {
             background: linear-gradient(135deg, #7B1FA2, #6A1B9A);
@@ -211,26 +233,32 @@
             background: #aa44ee;
         }
         #matchViewDetailsBtn:disabled {
-            background: #666666;
+            background: #888888;
             cursor: not-allowed;
-            color: #b0b0b0;
-            transform: none;
+            color: #cccccc;
         }
         #output, #match-output {
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            min-height: 200px;
+            padding: 20px;
+            border: 2px solid;
+            border-radius: 8px;
+            min-height: 250px;
             overflow-y: auto;
             overflow-x: auto;
             flex-grow: 1;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-            background: #fff;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            color: #1a1a1a;
+        }
+        body.classic-mode #output,
+        body.classic-mode #match-output {
+            background: #ffffff;
+            border-color: #ccc;
         }
         body.dark-mode #output,
         body.dark-mode #match-output {
-            background: #333333;
-            border-color: #4a4a4a;
+            background: #2a2a2a;
+            border-color: #555;
+            color: #f0f0f0;
         }
         .table-container {
             width: 100%;
@@ -244,15 +272,18 @@
             font-size: 0.95em;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid;
             padding: 10px;
             text-align: left;
             white-space: nowrap;
-            transition: background 0.3s;
+        }
+        body.classic-mode th,
+        body.classic-mode td {
+            border-color: #bbb;
         }
         body.dark-mode th,
         body.dark-mode td {
-            border-color: #4a4a4a;
+            border-color: #666;
         }
         th {
             cursor: pointer;
@@ -260,33 +291,28 @@
             top: 0;
             z-index: 1;
             background: #2a5298;
-            color: white;
+            color: #ffffff;
+        }
+        body.classic-mode th {
+            background: #2a5298;
         }
         body.dark-mode th {
-            background: #404040;
-            color: #e0e0e0;
-        }
-        tr:hover {
-            background: #e9ecef;
-        }
-        body.dark-mode tr:hover {
-            background: #444444;
+            background: #3a3a3a;
+            color: #f0f0f0;
         }
         body.classic-mode tr:nth-child(even) {
-            background: #f5f6fa;
+            background: #f7f8fc;
         }
         body.dark-mode tr:nth-child(even) {
-            background: #3a3a3a;
+            background: #333333;
         }
         .highlight-match {
-            background: #ffd700 !important;
-            color: #333 !important;
-            border: 1px solid #e6c200 !important;
+            background: #fff3cd !important;
+            color: #333333 !important;
         }
         body.dark-mode .highlight-match {
-            background: #ffcc00 !important;
-            color: #2b2b2b !important;
-            border: 1px solid #e6b800 !important;
+            background: #ffeeba !important;
+            color: #1f1f1f !important;
         }
         .match-6ov { background: #b3e5fc; }
         .match-10ov { background: #c8e6c9; }
@@ -333,11 +359,14 @@
             gap: 12px;
             flex-wrap: wrap;
             padding: 12px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            flex-direction: column;
+        }
+        body.classic-mode .filter-group {
+            background: rgba(255, 255, 255, 0.85);
         }
         body.dark-mode .filter-group {
-            background: #333333;
+            background: #2a2a2a;
         }
         .modal {
             display: none;
@@ -353,20 +382,27 @@
         }
         .modal-content {
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             max-width: 95%;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
-            background: #fff;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+            background: #ffffff;
+            color: #1a1a1a;
+        }
+        body.classic-mode .modal-content {
+            background: #ffffff;
         }
         body.dark-mode .modal-content {
-            background: #333333;
-            color: #e0e0e0;
+            background: #2a2a2a;
+            color: #f0f0f0;
         }
         .modal-content h2 {
             margin-top: 0;
             font-size: 1.5em;
+            color: #1e3c72;
+        }
+        body.classic-mode .modal-content h2 {
             color: #1e3c72;
         }
         body.dark-mode .modal-content h2 {
@@ -377,7 +413,7 @@
             align-items: center;
             gap: 10px;
             margin: 10px 0;
-            font-size: 1em;
+            font-size: 1.1em;
             cursor: pointer;
         }
         .modal-buttons {
@@ -393,40 +429,70 @@
             float: right;
             padding: 10px;
             font-size: 1em;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             background: #2a5298;
-            color: #fff;
+            color: #ffffff;
             border: none;
-            transition: all 0.3s ease;
+            transition: background 0.3s;
         }
         body.dark-mode .back-to-top {
-            background: #555555;
+            background: #666666;
         }
         .back-to-top:hover {
             background: #1e3c72;
-            transform: translateY(-2px);
         }
         body.dark-mode .back-to-top:hover {
-            background: #666666;
+            background: #777777;
         }
         @media (max-width: 600px) {
-            body { padding: 5px; }
-            .container { padding: 10px; }
-            h1 { font-size: 1.6em; }
-            label { font-size: 1em; }
-            input, select, button { padding: 10px; font-size: 0.9em; }
-            .button-group { gap: 10px; }
-            #output, #match-output { min-height: 150px; padding: 10px; }
-            th, td { font-size: 0.85em; padding: 8px; }
-            .modal-content { padding: 15px; max-width: 98%; }
-            .back-to-top { padding: 8px; font-size: 0.9em; }
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.6em;
+                padding-top: 40px;
+            }
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 100%;
+                text-align: right;
+            }
+            .theme-toggle select {
+                width: auto;
+                display: inline-block;
+            }
+            label {
+                font-size: 1em;
+            }
+            input, select, button {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            .button-group {
+                gap: 10px;
+            }
+            #output, #match-output {
+                min-height: 200px;
+                padding: 15px;
+            }
+            th, td {
+                font-size: 0.85em;
+                padding: 8px;
+            }
+            .modal-content {
+                padding: 15px;
+                max-width: 98%;
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body class="classic-mode">
-    <!-- Default Page: Cricket Chase Analyzer -->
     <div id="chase-analyzer">
         <div class="container">
             <div class="theme-toggle">
@@ -483,7 +549,6 @@
         </div>
     </div>
 
-    <!-- Hidden Page: Cricket Match Analyzer -->
     <div id="match-analyzer" style="display: none;">
         <div class="container">
             <div class="theme-toggle">
@@ -532,7 +597,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script>
-        // Global Theme Toggle
         function toggleTheme() {
             const theme = document.getElementById('themeSelect').value || document.getElementById('matchThemeSelect').value;
             document.body.className = theme;
@@ -541,7 +605,6 @@
             document.getElementById('matchThemeSelect').value = theme;
         }
 
-        // Navigation Functions
         function showMatchAnalyzer() {
             document.getElementById('chase-analyzer').style.display = 'none';
             document.getElementById('match-analyzer').style.display = 'block';
@@ -553,7 +616,6 @@
             toggleTheme();
         }
 
-        // --- Cricket Chase Analyzer Logic ---
         let chaseMatches = [];
         let chaseFilteredMatches = [];
         let chaseFirstInningsDone = false;
@@ -641,16 +703,11 @@
         }
 
         function isMatchInMatchAnalyzer(chaseMatch) {
-            if (!Array.isArray(matchLastData) || matchLastData.length === 0) return false;
-            const chaseDetails = chaseMatch.originalMatch;
-            const compareKeys = ['year', '6over', '10over', '15over', '20over', 'result'];
+            if (!matchLastData || matchLastData.length === 0) return false;
             return matchLastData.some(matchRow => {
+                const chaseDetails = chaseMatch.originalMatch;
                 const matchDetails = matchRow.match;
-                return compareKeys.every(key => {
-                    const chaseVal = chaseDetails[key] ? chaseDetails[key].toString().trim() : null;
-                    const matchVal = matchDetails[key] ? matchDetails[key].toString().trim() : null;
-                    return chaseVal === matchVal || (!chaseVal && !matchVal);
-                });
+                return Object.keys(chaseDetails).every(key => chaseDetails[key] === matchDetails[key]);
             });
         }
 
@@ -813,7 +870,7 @@
                     chaseLastData.push(rowData);
                 });
 
-                html += generateChaseTableRows(chaseLastData, over);
+                html += generateChaseTableRows(chaseLastData, over, runs, wickets);
                 html += '</tbody></table></div>';
 
                 const probabilities = calculateChaseProbabilities(chaseLastData);
@@ -826,12 +883,13 @@
             addChaseSortFunctionality();
         }
 
-        function generateChaseTableRows(data, over) {
+        function generateChaseTableRows(data, over, runs, wickets) {
             let html = '';
             data.forEach(row => {
+                const overKey = `${over}ov`;
+                const isMatch = over <= 20 && row[overKey] && row[overKey].split('/').map(Number)[0] === runs && row[overKey].split('/').map(Number)[1] === wickets;
                 const isHighlighted = isMatchInMatchAnalyzer(row);
-                const classList = [isHighlighted ? 'highlight-match' : ''];
-                html += `<tr class="${classList.join(' ').trim()}">`;
+                html += `<tr ${isMatch ? 'class="highlight"' : ''} ${isHighlighted ? 'class="highlight-match"' : ''}>`;
                 Object.entries(row).forEach(([key, value]) => {
                     if (key !== 'originalMatch') html += `<td>${value}</td>`;
                 });
@@ -855,7 +913,7 @@
                 const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
                 return yearMatch && rangeMatch && resultMatch;
             });
-            document.getElementById('tableBody').innerHTML = generateChaseTableRows(filteredData, over);
+            document.getElementById('tableBody').innerHTML = generateChaseTableRows(filteredData, over, runs, wickets);
             const probabilities = calculateChaseProbabilities(filteredData);
             document.getElementById('output').innerHTML = document.getElementById('output').innerHTML.split('<p>Probability')[0] + 
                 `<p>Probability of Chased: ${probabilities.chased}% | Probability of Defend: ${probabilities.defend}%</p>` +
@@ -992,7 +1050,6 @@
             document.getElementById('output').scrollTop = 0;
         }
 
-        // --- Cricket Match Analyzer Logic ---
         let matchMatches = [];
         let matchLastData = [];
         let matchAllYears = [];
@@ -1141,7 +1198,6 @@
             });
 
             matchLastData = matchedMatches;
-            localStorage.setItem('matchLastData', JSON.stringify(matchLastData));
             displayMatchResults(matchLastData);
         }
 
@@ -1158,7 +1214,7 @@
                 html += '<option value="">All Matches</option>';
                 for (let i = 1; i <= 10; i++) html += `<option value="${i}">${i} Field${i > 1 ? 's' : ''} Match</option>`;
                 html += '</select>';
-                html += '<label for="scoreRangeFilter">20-Over Score Range:</label>';
+                html += '<label for="matchScoreRangeFilter">20-Over Score Range:</label>';
                 html += '<select id="matchScoreRangeFilter" onchange="applyMatchFilters()">';
                 html += '<option value="">All Ranges</option>';
                 matchScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
@@ -1175,6 +1231,7 @@
 
                 const probabilities = calculateMatchProbabilities(data);
                 html += `<p id="matchProbability">Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%</p>`;
+                html += '<button class="back-to-top" onclick="scrollMatchToTop()">Back to Top</button>';
             }
 
             output.innerHTML = html;
@@ -1214,11 +1271,40 @@
                 })();
                 return yearMatch && matchCountMatch && rangeMatch;
             });
-            matchLastData = filteredData;
-            localStorage.setItem('matchLastData', JSON.stringify(matchLastData));
-            document.getElementById('matchTableBody').innerHTML = generateMatchTableRows(filteredData);
-            const probabilities = calculateMatchProbabilities(filteredData);
-            document.getElementById('matchProbability').innerHTML = `Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%`;
+
+            const output = document.getElementById('match-output');
+            let html = `<p>Matches found: ${filteredData.length}</p>`;
+            if (filteredData.length === 0) {
+                html += '<p>No matches found with current filters.</p>';
+            } else {
+                html += '<div class="filter-group">';
+                html += '<button class="year-filter-btn" onclick="openMatchYearFilterModal()">Filter Years</button>';
+                html += '<label for="matchFilter">Filter by Matches:</label>';
+                html += '<select id="matchFilter" onchange="applyMatchFilters()">';
+                html += `<option value="">All Matches</option>`;
+                for (let i = 1; i <= 10; i++) html += `<option value="${i}" ${matchFilter === i.toString() ? 'selected' : ''}>${i} Field${i > 1 ? 's' : ''} Match</option>`;
+                html += '</select>';
+                html += '<label for="matchScoreRangeFilter">20-Over Score Range:</label>';
+                html += '<select id="matchScoreRangeFilter" onchange="applyMatchFilters()">';
+                html += `<option value="">All Ranges</option>`;
+                matchScoreRanges.forEach(range => html += `<option value="${range}" ${scoreRangeFilter === range ? 'selected' : ''}>${range}</option>`);
+                html += '</select>';
+                html += '</div>';
+
+                html += '<div class="table-container"><table><thead><tr>';
+                const headers = ['Year', '6ov', '10ov', '15ov', '20ov', '10-6', '15-10', '15-6', '20-6', '20-10', '20-15', 'Result'];
+                headers.forEach(header => html += `<th>${header}</th>`);
+                html += '</tr></thead><tbody id="matchTableBody">';
+
+                html += generateMatchTableRows(filteredData);
+                html += '</tbody></table></div>';
+
+                const probabilities = calculateMatchProbabilities(filteredData);
+                html += `<p id="matchProbability">Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%</p>`;
+                html += '<button class="back-to-top" onclick="scrollMatchToTop()">Back to Top</button>';
+            }
+
+            output.innerHTML = html;
             document.getElementById('matchViewDetailsBtn').disabled = filteredData.length === 0;
             addMatchSortFunctionality();
         }
@@ -1276,10 +1362,10 @@
         function viewMatchFullMatchDetails() {
             const modal = document.getElementById('matchFullDetailsModal');
             const outputDiv = document.getElementById('matchFullDetailsOutput');
+            const matchFilter = document.getElementById('matchFilter').value;
+            const scoreRangeFilter = document.getElementById('matchScoreRangeFilter').value;
             const filteredData = matchLastData.filter(row => {
                 const yearMatch = matchSelectedYears.length === 0 || matchSelectedYears.includes(row.match['year'].toString());
-                const matchFilter = document.getElementById('matchFilter').value;
-                const scoreRangeFilter = document.getElementById('matchScoreRangeFilter').value;
                 const matchCountMatch = !matchFilter || row.matchCount === parseInt(matchFilter);
                 const rangeMatch = !scoreRangeFilter || (() => {
                     const [runs] = (row['20over'] || '0/0').split('/').map(Number);
@@ -1330,6 +1416,10 @@
 
         function closeMatchFullDetailsModal() {
             document.getElementById('matchFullDetailsModal').style.display = 'none';
+        }
+
+        function scrollMatchToTop() {
+            document.getElementById('match-output').scrollTop = 0;
         }
     </script>
 </body>
