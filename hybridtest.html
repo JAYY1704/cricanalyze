@@ -17,11 +17,11 @@
         }
         body.classic-mode {
             background: linear-gradient(135deg, #1e3c72, #2a5298), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/><path d="M20 80 Q50 50 80 80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/></svg>') repeat;
-            color: #1a1a1a; /* Darker font for classic mode */
+            color: #1a1a1a;
         }
         body.dark-mode {
             background: #1f1f1f;
-            color: #f0f0f0; /* Lighter font for dark mode */
+            color: #f0f0f0;
         }
         .container {
             max-width: 1200px;
@@ -36,11 +36,11 @@
             flex-grow: 1;
             box-sizing: border-box;
             position: relative;
-            background: rgba(255, 255, 255, 0.9); /* Default for classic mode */
+            background: rgba(255, 255, 255, 0.9);
         }
         body.classic-mode .container {
             background: rgba(255, 255, 255, 0.95);
-            color: #1a1a1a; /* Darker text */
+            color: #1a1a1a;
         }
         body.dark-mode .container {
             background: #2a2a2a;
@@ -82,7 +82,7 @@
             margin: 0 0 15px;
             padding-top: 10px;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-            color: #1e3c72; /* Default for classic mode */
+            color: #1e3c72;
         }
         body.classic-mode h1 {
             color: #1e3c72;
@@ -95,7 +95,7 @@
             margin: 8px 0 4px;
             font-weight: 600;
             font-size: 1.1em;
-            color: #2a5298; /* Default for classic mode */
+            color: #2a5298;
         }
         body.classic-mode label {
             color: #2a5298;
@@ -175,7 +175,6 @@
         body.dark-mode button:hover {
             background: #d0d0d0;
         }
-        /* Chase Analyzer Buttons */
         body.classic-mode #viewDetailsBtn {
             background: linear-gradient(135deg, #FF9800, #F57C00);
         }
@@ -194,7 +193,6 @@
             cursor: not-allowed;
             color: #cccccc;
         }
-        /* Match Analyzer Buttons */
         body.classic-mode #matchSubmitBtn {
             background: linear-gradient(135deg, #2196F3, #1976D2);
         }
@@ -248,8 +246,8 @@
             overflow-x: auto;
             flex-grow: 1;
             box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
-            background: #ffffff; /* Default for classic mode */
-            color: #1a1a1a; /* Darker text */
+            background: #ffffff;
+            color: #1a1a1a;
         }
         body.classic-mode #output,
         body.classic-mode #match-output {
@@ -292,7 +290,7 @@
             position: sticky;
             top: 0;
             z-index: 1;
-            background: #2a5298; /* Default for classic mode */
+            background: #2a5298;
             color: #ffffff;
         }
         body.classic-mode th {
@@ -389,7 +387,7 @@
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
-            background: #ffffff; /* Default for classic mode */
+            background: #ffffff;
             color: #1a1a1a;
         }
         body.classic-mode .modal-content {
@@ -402,7 +400,7 @@
         .modal-content h2 {
             margin-top: 0;
             font-size: 1.5em;
-            color: #1e3c72; /* Default for classic mode */
+            color: #1e3c72;
         }
         body.classic-mode .modal-content h2 {
             color: #1e3c72;
@@ -456,7 +454,7 @@
             }
             h1 {
                 font-size: 1.6em;
-                padding-top: 40px; /* Space for theme toggle */
+                padding-top: 40px;
             }
             .theme-toggle {
                 top: 10px;
@@ -495,7 +493,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body class="classic-mode">
-    <!-- Default Page: Cricket Chase Analyzer -->
     <div id="chase-analyzer">
         <div class="container">
             <div class="theme-toggle">
@@ -522,7 +519,10 @@
                 <option value="170-179">170-179</option>
                 <option value="180-189">180-189</option>
                 <option value="190-199">190-199</option>
-                <option value="200+">200+</option>
+                <option value="200-209">200-209</option>
+                <option value="210-219">210-219</option>
+                <option value="220-229">220-229</option>
+                <option value="230-300">230-300</option>
             </select>
             <div class="button-group">
                 <button onclick="processChaseInput()">Submit</button>
@@ -552,7 +552,6 @@
         </div>
     </div>
 
-    <!-- Hidden Page: Cricket Match Analyzer -->
     <div id="match-analyzer" style="display: none;">
         <div class="container">
             <div class="theme-toggle">
@@ -601,7 +600,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script>
-        // Global Theme Toggle
         function toggleTheme() {
             const theme = document.getElementById('themeSelect').value || document.getElementById('matchThemeSelect').value;
             document.body.className = theme;
@@ -610,7 +608,6 @@
             document.getElementById('matchThemeSelect').value = theme;
         }
 
-        // Navigation Functions
         function showMatchAnalyzer() {
             document.getElementById('chase-analyzer').style.display = 'none';
             document.getElementById('match-analyzer').style.display = 'block';
@@ -622,7 +619,6 @@
             toggleTheme();
         }
 
-        // --- Cricket Chase Analyzer Logic ---
         let chaseMatches = [];
         let chaseFilteredMatches = [];
         let chaseFirstInningsDone = false;
@@ -686,7 +682,6 @@
 
         function parseChaseRange(rangeStr) {
             if (!rangeStr) return null;
-            if (rangeStr === "200+") return [200, Infinity];
             const [min, max] = rangeStr.split('-').map(Number);
             return [min, max];
         }
@@ -768,7 +763,7 @@
                     const score = match['20over'];
                     if (!score) return false;
                     const [matchRuns] = score.split('/').map(Number);
-                    return matchRuns >= selectedRange[0] && (selectedRange[1] === Infinity ? true : matchRuns <= selectedRange[1]);
+                    return matchRuns >= selectedRange[0] && matchRuns <= selectedRange[1];
                 });
                 chaseScoreRange = selectedRange;
             }
@@ -814,7 +809,7 @@
                 if (score) {
                     const [runs] = score.split('/').map(Number);
                     const range = getChaseScoreRange(runs);
-                    const rangeStr = range[1] === Infinity ? '200+' : `${range[0]}-${range[1]}`;
+                    const rangeStr = `${range[0]}-${range[1]}`;
                     if (!chaseAllScoreRanges.includes(rangeStr)) chaseAllScoreRanges.push(rangeStr);
                 }
             });
@@ -822,7 +817,7 @@
 
             let html = `<p>Analysis for ${runs}/${wickets} after Over ${over}<br>`;
             if (over > 20 || selectedRange) {
-                html += `20-Over Score Range: ${rangeStr || `${chaseScoreRange[0]}-${chaseScoreRange[1] === Infinity ? '200+' : chaseScoreRange[1]}`}<br>`;
+                html += `20-Over Score Range: ${rangeStr || `${chaseScoreRange[0]}-${chaseScoreRange[1]}`}<br>`;
             }
             if (over > 20) html += `Run Difference (20ov - ${over}ov): ${runDifference}<br>`;
             html += `Total matches: ${totalMatches}</p>`;
@@ -915,7 +910,7 @@
                 const rangeMatch = !scoreRangeFilter || (() => {
                     const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
                     const range = parseChaseRange(scoreRangeFilter);
-                    return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
+                    return runs >= range[0] && runs <= range[1];
                 })();
                 const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
                 return yearMatch && rangeMatch && resultMatch;
@@ -958,7 +953,10 @@
         }
 
         function getChaseScoreRange(runs) {
-            if (runs >= 200) return [200, Infinity];
+            if (runs >= 230) return [230, 300];
+            if (runs >= 220) return [220, 229];
+            if (runs >= 210) return [210, 219];
+            if (runs >= 200) return [200, 209];
             const rangeStart = Math.floor(runs / 10) * 10;
             return [rangeStart, rangeStart + 9];
         }
@@ -978,7 +976,7 @@
                 const rangeMatch = !scoreRangeFilter || (() => {
                     const [runs] = (row['20ov'] || '0/0').split('/').map(Number);
                     const range = parseChaseRange(scoreRangeFilter);
-                    return runs >= range[0] && (range[1] === Infinity ? true : runs <= range[1]);
+                    return runs >= range[0] && runs <= range[1];
                 })();
                 const resultMatch = !resultFilter || row.Result.toLowerCase() === resultFilter;
                 return yearMatch && rangeMatch && resultMatch;
@@ -1057,12 +1055,11 @@
             document.getElementById('output').scrollTop = 0;
         }
 
-        // --- Cricket Match Analyzer Logic ---
         let matchMatches = [];
         let matchLastData = [];
         let matchAllYears = [];
         let matchSelectedYears = [];
-        const matchScoreRanges = ['120-129', '130-139', '140-149', '150-159', '160-169', '170-179', '180-189', '190-199', '200-210', '210-220', '220-230', '230-300'];
+        const matchScoreRanges = ['120-129', '130-139', '140-149', '150-159', '160-169', '170-179', '180-189', '190-199', '200-209', '210-219', '220-229', '230-300'];
 
         function loadMatchData() {
             const url = 'https://raw.githubusercontent.com/jayy1704/cricanalyze/main/cricket_data.csv';
@@ -1205,7 +1202,7 @@
                 }
             });
 
-            matchLastData = matchedMatches; // Update matchLastData with initial results
+            matchLastData = matchedMatches;
             displayMatchResults(matchLastData);
         }
 
@@ -1222,7 +1219,7 @@
                 html += '<option value="">All Matches</option>';
                 for (let i = 1; i <= 10; i++) html += `<option value="${i}">${i} Field${i > 1 ? 's' : ''} Match</option>`;
                 html += '</select>';
-                html += '<label for="scoreRangeFilter">20-Over Score Range:</label>';
+                html += '<label for="matchScoreRangeFilter">20-Over Score Range:</label>';
                 html += '<select id="matchScoreRangeFilter" onchange="applyMatchFilters()">';
                 html += '<option value="">All Ranges</option>';
                 matchScoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
@@ -1239,6 +1236,7 @@
 
                 const probabilities = calculateMatchProbabilities(data);
                 html += `<p id="matchProbability">Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%</p>`;
+                html += '<button class="back-to-top" onclick="scrollMatchToTop()">Back to Top</button>';
             }
 
             output.innerHTML = html;
@@ -1278,10 +1276,40 @@
                 })();
                 return yearMatch && matchCountMatch && rangeMatch;
             });
-            matchLastData = filteredData; // Update matchLastData with filtered results
-            document.getElementById('matchTableBody').innerHTML = generateMatchTableRows(filteredData);
-            const probabilities = calculateMatchProbabilities(filteredData);
-            document.getElementById('matchProbability').innerHTML = `Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%`;
+
+            const output = document.getElementById('match-output');
+            let html = `<p>Matches found: ${filteredData.length}</p>`;
+            if (filteredData.length === 0) {
+                html += '<p>No matches found with current filters.</p>';
+            } else {
+                html += '<div class="filter-group">';
+                html += '<button class="year-filter-btn" onclick="openMatchYearFilterModal()">Filter Years</button>';
+                html += '<label for="matchFilter">Filter by Matches:</label>';
+                html += '<select id="matchFilter" onchange="applyMatchFilters()">';
+                html += `<option value="">All Matches</option>`;
+                for (let i = 1; i <= 10; i++) html += `<option value="${i}" ${matchFilter === i.toString() ? 'selected' : ''}>${i} Field${i > 1 ? 's' : ''} Match</option>`;
+                html += '</select>';
+                html += '<label for="matchScoreRangeFilter">20-Over Score Range:</label>';
+                html += '<select id="matchScoreRangeFilter" onchange="applyMatchFilters()">';
+                html += `<option value="">All Ranges</option>`;
+                matchScoreRanges.forEach(range => html += `<option value="${range}" ${scoreRangeFilter === range ? 'selected' : ''}>${range}</option>`);
+                html += '</select>';
+                html += '</div>';
+
+                html += '<div class="table-container"><table><thead><tr>';
+                const headers = ['Year', '6ov', '10ov', '15ov', '20ov', '10-6', '15-10', '15-6', '20-6', '20-10', '20-15', 'Result'];
+                headers.forEach(header => html += `<th>${header}</th>`);
+                html += '</tr></thead><tbody id="matchTableBody">';
+
+                html += generateMatchTableRows(filteredData);
+                html += '</tbody></table></div>';
+
+                const probabilities = calculateMatchProbabilities(filteredData);
+                html += `<p id="matchProbability">Chased: ${probabilities.chased}% | Defended: ${probabilities.defend}%</p>`;
+                html += '<button class="back-to-top" onclick="scrollMatchToTop()">Back to Top</button>';
+            }
+
+            output.innerHTML = html;
             document.getElementById('matchViewDetailsBtn').disabled = filteredData.length === 0;
             addMatchSortFunctionality();
         }
@@ -1339,10 +1367,10 @@
         function viewMatchFullMatchDetails() {
             const modal = document.getElementById('matchFullDetailsModal');
             const outputDiv = document.getElementById('matchFullDetailsOutput');
+            const matchFilter = document.getElementById('matchFilter').value;
+            const scoreRangeFilter = document.getElementById('matchScoreRangeFilter').value;
             const filteredData = matchLastData.filter(row => {
                 const yearMatch = matchSelectedYears.length === 0 || matchSelectedYears.includes(row.match['year'].toString());
-                const matchFilter = document.getElementById('matchFilter').value;
-                const scoreRangeFilter = document.getElementById('matchScoreRangeFilter').value;
                 const matchCountMatch = !matchFilter || row.matchCount === parseInt(matchFilter);
                 const rangeMatch = !scoreRangeFilter || (() => {
                     const [runs] = (row['20over'] || '0/0').split('/').map(Number);
@@ -1393,6 +1421,10 @@
 
         function closeMatchFullDetailsModal() {
             document.getElementById('matchFullDetailsModal').style.display = 'none';
+        }
+
+        function scrollMatchToTop() {
+            document.getElementById('match-output').scrollTop = 0;
         }
     </script>
 </body>
