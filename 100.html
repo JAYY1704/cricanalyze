@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Cricket Match Analyzer</title>
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.classic-mode {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+        }
+        body.dark-mode {
+            background: #2b2b2b;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            flex-grow: 1;
+        }
+        body.dark-mode .container {
+            background: #333333;
+            color: #e0e0e0;
+        }
+        .theme-toggle select {
+            padding: 6px;
+            font-size: 0.9em;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+        body.dark-mode .theme-toggle select {
+            border-color: #4a4a4a;
+            background: #404040;
+            color: #e0e0e0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin: 0 0 10px;
+            color: #1e3c72;
+        }
+        body.dark-mode h1 {
+            color: #cccccc;
+        }
+        label {
+            font-weight: 600;
+            font-size: 1em;
+            color: #2a5298;
+        }
+        body.dark-mode label {
+            color: #cccccc;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            background: #f9f9f9;
+            font-size: 0.95em;
+        }
+        body.dark-mode input, body.dark-mode select {
+            border-color: #4a4a4a;
+            background: #404040;
+            color: #e0e0e0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        body.dark-mode button {
+            background: #ffffff;
+            color: #2b2b2b;
+        }
+        #resetBtn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        body.dark-mode #resetBtn {
+            background: #ff5555;
+        }
+        #downloadBtn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        body.dark-mode #downloadBtn {
+            background: #55aaff;
+        }
+        #downloadBtn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+        }
+        #output {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            min-height: 200px;
+            overflow-y: auto;
+            background: #fff;
+        }
+        body.dark-mode #output {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        body.dark-mode th, body.dark-mode td {
+            border-color: #4a4a4a;
+        }
+        th {
+            background: #2a5298;
+            color: white;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+        }
+        body.dark-mode th {
+            background: #404040;
+            color: #e0e0e0;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        body.dark-mode .filter-group {
+            background: #333333;
+        }
+        /* Highlighting Colors */
+        .match-1ov { background: #b3e5fc; }
+        .match-2ov { background: #c8e6c9; }
+        .match-3ov { background: #ffecb3; }
+        .match-4ov { background: #f8bbd0; }
+        .match-5ov { background: #d1c4e9; }
+        .match-6ov { background: #b2dfdb; }
+        .match-7ov { background: #f0f4c3; }
+        .match-8ov { background: #ffcdd2; }
+        .match-9ov { background: #c5cae9; }
+        .match-10ov { background: #b0bec5; }
+        .match-11ov { background: #b3e5fc; }
+        .match-12ov { background: #c8e6c9; }
+        .match-13ov { background: #ffecb3; }
+        .match-14ov { background: #f8bbd0; }
+        .match-15ov { background: #d1c4e9; }
+        .match-16ov { background: #b2dfdb; }
+        .match-17ov { background: #f0f4c3; }
+        .match-18ov { background: #ffcdd2; }
+        .match-19ov { background: #c5cae9; }
+        .match-20ov { background: #b0bec5; }
+        body.dark-mode .match-1ov { background: #4a90e2; }
+        body.dark-mode .match-2ov { background: #66bb6a; }
+        body.dark-mode .match-3ov { background: #ffa726; }
+        body.dark-mode .match-4ov { background: #ec407a; }
+        body.dark-mode .match-5ov { background: #7e57c2; }
+        body.dark-mode .match-6ov { background: #26a69a; }
+        body.dark-mode .match-7ov { background: #9ccc65; }
+        body.dark-mode .match-8ov { background: #ef5350; }
+        body.dark-mode .match-9ov { background: #5c6bc0; }
+        body.dark-mode .match-10ov { background: #455a64; }
+        body.dark-mode .match-11ov { background: #4a90e2; }
+        body.dark-mode .match-12ov { background: #66bb6a; }
+        body.dark-mode .match-13ov { background: #ffa726; }
+        body.dark-mode .match-14ov { background: #ec407a; }
+        body.dark-mode .match-15ov { background: #7e57c2; }
+        body.dark-mode .match-16ov { background: #26a69a; }
+        body.dark-mode .match-17ov { background: #9ccc65; }
+        body.dark-mode .match-18ov { background: #ef5350; }
+        body.dark-mode .match-19ov { background: #5c6bc0; }
+        body.dark-mode .match-20ov { background: #455a64; }
+        .match-1ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b3e5fc 50%); }
+        .match-2ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #c8e6c9 50%); }
+        .match-3ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #ffecb3 50%); }
+        .match-4ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #f8bbd0 50%); }
+        .match-5ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #d1c4e9 50%); }
+        .match-6ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b2dfdb 50%); }
+        .match-7ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #f0f4c3 50%); }
+        .match-8ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #ffcdd2 50%); }
+        .match-9ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #c5cae9 50%); }
+        .match-10ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b0bec5 50%); }
+        .match-11ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b3e5fc 50%); }
+        .match-12ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #c8e6c9 50%); }
+        .match-13ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #ffecb3 50%); }
+        .match-14ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #f8bbd0 50%); }
+        .match-15ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #d1c4e9 50%); }
+        .match-16ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b2dfdb 50%); }
+        .match-17ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #f0f4c3 50%); }
+        .match-18ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #ffcdd2 50%); }
+        .match-19ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #c5cae9 50%); }
+        .match-20ov-wickets { background: linear-gradient(to right, #ff6f61 50%, #b0bec5 50%); }
+        body.dark-mode .match-1ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #4a90e2 50%); }
+        body.dark-mode .match-2ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #66bb6a 50%); }
+        body.dark-mode .match-3ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ffa726 50%); }
+        body.dark-mode .match-4ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ec407a 50%); }
+        body.dark-mode .match-5ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #7e57c2 50%); }
+        body.dark-mode .match-6ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #26a69a 50%); }
+        body.dark-mode .match-7ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #9ccc65 50%); }
+        body.dark-mode .match-8ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ef5350 50%); }
+        body.dark-mode .match-9ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #5c6bc0 50%); }
+        body.dark-mode .match-10ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #455a64 50%); }
+        body.dark-mode .match-11ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #4a90e2 50%); }
+        body.dark-mode .match-12ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #66bb6a 50%); }
+        body.dark-mode .match-13ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ffa726 50%); }
+        body.dark-mode .match-14ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ec407a 50%); }
+        body.dark-mode .match-15ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #7e57c2 50%); }
+        body.dark-mode .match-16ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #26a69a 50%); }
+        body.dark-mode .match-17ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #9ccc65 50%); }
+        body.dark-mode .match-18ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #ef5350 50%); }
+        body.dark-mode .match-19ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #5c6bc0 50%); }
+        body.dark-mode .match-20ov-wickets { background: linear-gradient(to right, #d32f2f 50%, #455a64 50%); }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="classic-mode">
+    <div class="container">
+        <div class="theme-toggle">
+            <select id="themeSelect" onchange="toggleTheme()">
+                <option value="classic-mode">Classic Mode</option>
+                <option value="dark-mode">Dark Mode</option>
+            </select>
+        </div>
+        <h1>Cricket Match Analyzer</h1>
+        
+        <div class="input-grid" id="inputGrid"></div>
+        
+        <div class="button-group">
+            <button onclick="processInput()">Submit</button>
+            <button id="resetBtn" onclick="resetForm()">Reset</button>
+            <button id="downloadBtn" onclick="downloadResults()" disabled>Download Results</button>
+        </div>
+        
+        <div id="output">Loading data from GitHub...</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script>
+        let matches = [];
+        let lastData = [];
+        let initialMatchCounts = []; // Store original match counts
+        const scoreRanges = [
+            '120-129', '130-139', '140-149', '150-159', '160-169', '170-179',
+            '180-189', '190-199', '200-210', '210-220', '220-230', '230-300'
+        ];
+
+        function toggleTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('theme') || 'classic-mode';
+            document.getElementById('themeSelect').value = savedTheme;
+            document.body.className = savedTheme;
+            generateInputs();
+            loadData();
+        };
+
+        function generateInputs() {
+            const inputGrid = document.getElementById('inputGrid');
+            for (let i = 1; i <= 20; i++) {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label for="score${i}ov">${i} Overs Score/Wickets:</label>
+                    <input type="text" id="score${i}ov" placeholder="e.g., 20/1">
+                `;
+                inputGrid.appendChild(div);
+            }
+        }
+
+        function loadData() {
+            const url = 'https://raw.githubusercontent.com/jayy1704/cricanalyze/main/hundreds.csv';
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    Papa.parse(data, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: (results) => {
+                            matches = results.data;
+                            document.getElementById('output').textContent = `Data loaded successfully! ${matches.length} matches found.`;
+                        }
+                    });
+                })
+                .catch(err => {
+                    document.getElementById('output').textContent = "Error loading data: " + err.message;
+                });
+        }
+
+        function parseScore(scoreWickets) {
+            if (!scoreWickets) return [null, null];
+            const parts = scoreWickets.split('/');
+            if (parts.length !== 2) return [null, null];
+            const runs = parseInt(parts[0]);
+            const wickets = parseInt(parts[1]);
+            if (isNaN(runs) || isNaN(wickets) || wickets < 0 || wickets > 10) return [null, null];
+            return [runs, wickets];
+        }
+
+        function parseRange(rangeStr) {
+            if (!rangeStr) return null;
+            const [min, max] = rangeStr.split('-').map(Number);
+            return [min, max];
+        }
+
+        function calculateProbabilities(data) {
+            const validResults = data.filter(row => 
+                row['Result'].toLowerCase() === 'chased' || row['Result'].toLowerCase() === 'defend'
+            );
+            const totalValid = validResults.length;
+            if (totalValid === 0) return { chased: 0, defend: 0, chasedCount: 0, defendCount: 0 };
+            const chasedCount = validResults.filter(row => row['Result'].toLowerCase() === 'chased').length;
+            const defendCount = validResults.filter(row => row['Result'].toLowerCase() === 'defend').length;
+            return {
+                chased: (chasedCount / totalValid * 100).toFixed(2),
+                defend: (defendCount / totalValid * 100).toFixed(2),
+                chasedCount,
+                defendCount
+            };
+        }
+
+        function processInput() {
+            const inputScores = {};
+            for (let i = 1; i <= 20; i++) {
+                const score = document.getElementById(`score${i}ov`).value.trim();
+                inputScores[`${i}over`] = parseScore(score);
+            }
+            
+            if (Object.values(inputScores).every(([runs]) => runs === null)) {
+                document.getElementById('output').textContent = "Please enter at least one valid score/wickets (e.g., '20/1').";
+                return;
+            }
+            if (matches.length === 0) {
+                document.getElementById('output').textContent = "Please wait for the data to load.";
+                return;
+            }
+
+            const matchedMatches = matches.map(match => {
+                const matchScores = {};
+                const matchesAt = [];
+                const matchesWicketsAt = [];
+                let matchCount = 0;
+
+                for (let i = 1; i <= 20; i++) {
+                    const key = `${i}over`;
+                    matchScores[key] = match[key] ? match[key].split('/').map(Number) : [null, null];
+                    const [inputRuns, inputWickets] = inputScores[key];
+                    const [matchRuns, matchWickets] = matchScores[key];
+                    if (inputRuns !== null && matchRuns === inputRuns) {
+                        matchCount++;
+                        matchesAt.push(key);
+                        if (inputWickets !== null && matchWickets === inputWickets) {
+                            matchesWicketsAt.push(key);
+                        }
+                    }
+                }
+
+                if (matchCount > 0) {
+                    const row = { match, matchCount, matchesAt, matchesWicketsAt, Result: match['result'] || 'unknown' };
+                    for (let i = 1; i <= 20; i++) {
+                        row[`${i}over`] = match[`${i}over`] || 'N/A';
+                    }
+                    return row;
+                }
+                return null;
+            }).filter(row => row !== null);
+
+            lastData = matchedMatches;
+            initialMatchCounts = [...new Set(matchedMatches.map(row => row.matchCount))].sort((a, b) => a - b); // Store initial match counts
+            renderOutput(matchedMatches);
+        }
+
+        function renderOutput(data) {
+            const output = document.getElementById('output');
+            let html = `<p>Matches found: ${data.length}</p>`;
+            if (data.length === 0) {
+                html += `<p>No matches found with the entered scores.</p>`;
+            } else {
+                html += '<div class="filter-group">';
+                html += '<label for="matchFilter">Filter by Number of Matches:</label>';
+                html += '<select id="matchFilter" onchange="applyFilters()"><option value="">All Matches</option></select>';
+                html += '<label for="scoreRangeFilter">Filter by 20-Over Score Range:</label>';
+                html += '<select id="scoreRangeFilter" onchange="applyFilters()">';
+                html += '<option value="">All Ranges</option>';
+                scoreRanges.forEach(range => html += `<option value="${range}">${range}</option>`);
+                html += '</select></div>';
+
+                html += '<div class="table-container"><table><thead><tr>';
+                html += '<th>Year</th>';
+                for (let i = 1; i <= 20; i++) html += `<th>${i}ov</th>`;
+                html += '<th>Result</th></tr></thead><tbody id="tableBody">';
+                html += generateTableRows(data);
+                html += '</tbody></table></div>';
+
+                const probs = calculateProbabilities(data);
+                html += `<p id="probability">Probability of Chased: ${probs.chased}% (${probs.chasedCount}) | Probability of Defend: ${probs.defend}% (${probs.defendCount})</p>`;
+            }
+
+            output.innerHTML = html;
+            document.getElementById('downloadBtn').disabled = data.length === 0;
+            updateMatchFilterOptions(); // Use initialMatchCounts
+            addSortFunctionality();
+        }
+
+        function generateTableRows(data) {
+            let html = '';
+            data.forEach(row => {
+                html += '<tr>';
+                html += `<td>${row.match['year']}</td>`;
+                for (let i = 1; i <= 20; i++) {
+                    const key = `${i}over`;
+                    const className = row.matchesAt.includes(key) 
+                        ? (row.matchesWicketsAt.includes(key) ? `match-${i}ov-wickets` : `match-${i}ov`) 
+                        : '';
+                    html += `<td class="${className}">${row[key]}</td>`;
+                }
+                html += `<td>${row['Result']}</td>`;
+                html += '</tr>';
+            });
+            return html;
+        }
+
+        function updateMatchFilterOptions() {
+            const matchFilter = document.getElementById('matchFilter');
+            matchFilter.innerHTML = '<option value="">All Matches</option>';
+            initialMatchCounts.forEach(count => {
+                matchFilter.innerHTML += `<option value="${count}">${count} Field${count > 1 ? 's' : ''} Match</option>`;
+            });
+        }
+
+        function applyFilters() {
+            const matchFilter = document.getElementById('matchFilter').value;
+            const scoreRangeFilter = document.getElementById('scoreRangeFilter').value;
+            const filteredData = lastData.filter(row => {
+                const matchCountMatch = !matchFilter || row.matchCount === parseInt(matchFilter);
+                const rangeMatch = !scoreRangeFilter || (() => {
+                    const [runs] = (row['20over'] || '0/0').split('/').map(Number);
+                    const [min, max] = parseRange(scoreRangeFilter);
+                    return runs >= min && runs <= max;
+                })();
+                return matchCountMatch && rangeMatch;
+            });
+
+            document.getElementById('tableBody').innerHTML = generateTableRows(filteredData);
+            const probs = calculateProbabilities(filteredData);
+            document.getElementById('probability').innerHTML = 
+                `Probability of Chased: ${probs.chased}% (${probs.chasedCount}) | Probability of Defend: ${probs.defend}% (${probs.defendCount})`;
+            addSortFunctionality();
+        }
+
+        function addSortFunctionality() {
+            const table = document.querySelector('#output table');
+            if (!table) return;
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const isAscending = header.dataset.sort !== 'asc';
+                    
+                    rows.sort((a, b) => {
+                        const aValue = a.cells[index].textContent;
+                        const bValue = b.cells[index].textContent;
+                        if (index === 0) { // Year
+                            return isAscending ? Number(aValue) - Number(bValue) : Number(bValue) - Number(aValue);
+                        }
+                        if (index === 21) { // Result
+                            return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                        }
+                        const [runsA] = aValue.includes('/') ? aValue.split('/').map(Number) : [0];
+                        const [runsB] = bValue.includes('/') ? bValue.split('/').map(Number) : [0];
+                        return isAscending ? runsA - runsB : runsB - runsA;
+                    });
+
+                    headers.forEach(h => delete h.dataset.sort);
+                    header.dataset.sort = isAscending ? 'asc' : 'desc';
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        }
+
+        function resetForm() {
+            for (let i = 1; i <= 20; i++) {
+                document.getElementById(`score${i}ov`).value = '';
+            }
+            document.getElementById('output').textContent = "Loading data from GitHub...";
+            document.getElementById('downloadBtn').disabled = true;
+            matches = [];
+            lastData = [];
+            initialMatchCounts = [];
+            loadData();
+        }
+
+        function downloadResults() {
+            const filteredData = Array.from(document.querySelectorAll('#tableBody tr')).map(row => {
+                const cells = row.querySelectorAll('td');
+                const data = { Year: cells[0].textContent, Result: cells[21].textContent };
+                for (let i = 1; i <= 20; i++) {
+                    data[`${i}ov`] = cells[i].textContent;
+                }
+                return data;
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(filteredData);
+            XLSX.utils.book_append_sheet(wb, ws, "Results");
+            XLSX.writeFile(wb, `Cricket_Analysis_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+    </script>
+</body>
+</html>
